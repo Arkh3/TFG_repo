@@ -1,4 +1,4 @@
-1. Fusionar este código con el de Atuch (el de atuch está más completo pero a lo mejor en este se hace algo mejor o mas claro)
+1. Done: Fusionar este código con el de Atuch (el de atuch está más completo pero a lo mejor en este se hace algo mejor o mas claro)
 
     2. que reconozca que es una persona y no una imagen o video suyo (mirando el parpadeo)
 
