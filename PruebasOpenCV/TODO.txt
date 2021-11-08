@@ -1,7 +1,13 @@
-1. Done: Fusionar este código con el de Atuch (el de atuch está más completo pero a lo mejor en este se hace algo mejor o mas claro)
+1. HECHO: Fusionar este código con el de Atuch (el de atuch está más completo pero a lo mejor en este se hace algo mejor o mas claro)
 
     2. que reconozca que es una persona y no una imagen o video suyo (mirando el parpadeo)
 
     3. siga entrenando al modelo cada vez que se inicie sesión (para que tenga en cuenta el envejecimiento, crecimiento de barba o pelo, ...) (efecto de envejecimiento)
 
     4. comparar diferentes métodos (con diferentes tamaños, )
+
+        - Comparar haar cascades.
+        - Probar dlib y compararlos con haarcascades.
+        
+        - Buscar y probar otros metodos a parte de opencv.
+        - Comparar los diferentes métodos probados (tiempos, falsos positivos, ...).
