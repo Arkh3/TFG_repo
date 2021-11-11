@@ -9,7 +9,6 @@ def loadCascade(cascade):
     cascadePath = cv.data.haarcascades + cascade
     face_cascade = cv.CascadeClassifier()
 
-    #-- 1. Load the cascades
     if not face_cascade.load(cv.samples.findFile(cascadePath)):
         print('--(!)Error loading face cascade')
         exit(0)
@@ -17,11 +16,11 @@ def loadCascade(cascade):
     return face_cascade
 
 
-def train(images, labels, modelo, user):
+def trainModel(images, labels, modelo, user):
 
     if modelo == 'EigenFaces': recognizer = cv.face.EigenFaceRecognizer_create()
-    if modelo == 'FisherFaces': recognizer = cv.face.FisherFaceRecognizer_create()
-    if modelo == 'LBPH': recognizer = cv.face.LBPHFaceRecognizer_create()
+    elif modelo == 'FisherFaces': recognizer = cv.face.FisherFaceRecognizer_create()
+    elif modelo == 'LBPH': recognizer = cv.face.LBPHFaceRecognizer_create()
 
     # TODO: a lo mejor es interesante hacer un estudio de tiempos, atuch en su código tiene la parte de medir tiempos
 
@@ -59,8 +58,8 @@ def getTrainingInfo(user):
 def recognize(id, face, modelo, user):
 
     if modelo == 'EigenFaces': recognizer = cv.face.EigenFaceRecognizer_create()
-    if modelo == 'FisherFaces': recognizer = cv.face.FisherFaceRecognizer_create()
-    if modelo == 'LBPH': recognizer = cv.face.LBPHFaceRecognizer_create()
+    elif modelo == 'FisherFaces': recognizer = cv.face.FisherFaceRecognizer_create()
+    elif modelo == 'LBPH': recognizer = cv.face.LBPHFaceRecognizer_create()
 
     path = 'users/' + user + "/recognizer/trainer.yml"
 
@@ -71,11 +70,9 @@ def recognize(id, face, modelo, user):
     id_, conf = recognizer.predict(face) # TODO mirar en la documentacion pero se puede hacer que esto te devuelva un % con la confianza que reconoce
 
     if conf > 0:
-        print("Acierto")
         return True
     
     else:
-        print("Fallo")
         return False
 
 
@@ -175,7 +172,6 @@ def prepareFolders(user):
         os.mkdir(auxPath)
 
 
-# Iniciar sesion o registrate. Esto dejarlo para el final, para ahora hacer las pruebas mas rapido
 def initUser():
 
     print("\n MENÚ DE INICIO \n")
@@ -224,7 +220,7 @@ def logIn():
     img = cv.imread("PruebasOpenCV\\recognize\scarlett_johannson.jpg")
     face = detectMainFace(img)
     
-    if not(recognize(user, face, 'EigenFaces', user)):
+    if not(recognize(user, face, 'LBPH', user)):
         print("fallo")
         user = ""
 
@@ -257,7 +253,7 @@ def register():
     captureAndSaveFaces(user)
 
     images, labels = getTrainingInfo(user) #TODO: getTrainingInfo no funciona bien por los paths
-    train(images, labels, 'EigenFaces', user)
+    trainModel(images, labels, 'LBPH', user)
     
     print("Correcto")
 
