@@ -77,7 +77,7 @@ def main():
 
     test(user_id)
 
-    removeUserFolder(user_id)
+    # removeUserFolder(user_id)
 
 
 if __name__ == "__main__":

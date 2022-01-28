@@ -1,8 +1,7 @@
 # este documento está hecho para testear la función de detectMainFace() de FaceDetection.py
 
 # escoger diferentes haar_cascades, ver diferentes métodos y cómo se comportan
-
-from FaceDetection import *
+from FaceRecognition import *
 import shutil
 import face_recognition
 
@@ -30,7 +29,7 @@ def detectFaceTester(frame, cascade):
     # cv.imshow('Capture - Faces detected', frame_gray)
     # cv.waitKey(0)
 
-    saveFace(frame_gray, "tester")
+    saveFace(frame_gray, "tester", "\\train\\")
 
     return detectionTime
 
@@ -59,7 +58,7 @@ def detectFaceTester2(path):
     # cv.imshow('Capture - Faces detected', img)
     # cv.waitKey(0)
 
-    saveFace(img, "tester")
+    saveFace(img, "tester", "\\train\\")
 
     return detectionTime
         

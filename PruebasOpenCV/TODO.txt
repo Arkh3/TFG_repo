@@ -1,6 +1,6 @@
-1. Fusionar este código con el de Atuch (el de atuch está más completo pero a lo mejor en este se hace algo mejor o mas claro)
+1. DONE: Fusionar este código con el de Atuch (el de atuch está más completo pero a lo mejor en este se hace algo mejor o mas claro)
 
-2. que reconozca que es una persona y no una imagen o video suyo (mirando el parpadeo)
+2. DONE: que reconozca que es una persona y no una imagen o video suyo (mirando el parpadeo)
 
 3. siga entrenando al modelo cada vez que se inicie sesión (para que tenga en cuenta el envejecimiento, crecimiento de barba o pelo, ...) (efecto de envejecimiento)
     creo que hay una función update() que hace eso https://docs.opencv.org/3.4.15/dd/d65/classcv_1_1face_1_1FaceRecognizer.html 
@@ -9,10 +9,12 @@
 
 4. comparar diferentes métodos (con diferentes tamaños, )
 
+    DETECCIÓN DE CARAS
     - Comparar haar cascades.
     - Probar dlib y compararlos con haarcascades.
-        ver si funcionan bien con personas con caras diferentes (gafas, barbas, gorros, sombreros, alguna cicatriz o tuertos)
+        probar los tiempos, falsos positivos, falsos negativos, comportamiento con características especiales(gafas, barbas, gorros, sombreros, alguna cicatriz o tuertos)
     
+    RECONOCIMIENTO FACIAL
     - Buscar y probar otros metodos a parte de opencv.
     - Comparar los diferentes métodos probados (tiempos, falsos positivos, ...).
 

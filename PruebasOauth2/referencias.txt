@@ -1,4 +1,0 @@
-para la memoria de oauth - https://www.youtube.com/watch?v=GeXbsMezj8s
-
-usar un oauth2 proxy - https://www.youtube.com/watch?v=KXOBuXxWc7c
-
