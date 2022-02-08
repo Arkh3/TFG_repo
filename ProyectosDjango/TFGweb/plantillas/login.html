@@ -2,6 +2,14 @@
 
 {% block content %}
 
-<h1 class="text-center">Estás en login!{{my_text}}</h1>
+<!-- el action se puede poner de otra forma más bonita / eficaz -->
+<form action="/login/" method="post">
+    <table>
+        {{ login_form }}
+    </table>
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary rounded-pill p-2 m-2">Iniciar sesión</button>
+</div>
+</form>
 
 {% endblock %}

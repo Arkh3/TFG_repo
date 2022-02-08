@@ -5,7 +5,7 @@ python manage.py migrate
 python manage.py runserver
 
 3# Para verlo en el navegador la ruta actual es
-http://127.0.0.1:8000/saludo/
+http://127.0.0.1:8000/inicio/
 http://127.0.0.1:8000/login/
 
 4# Otros
@@ -13,4 +13,6 @@ Dentro de un proyecto Django se pueden crear como varias apps, no se si estará 
 
 4# Crear superusuario desde consola para poder usar admin (PARA MÁS ADELANTE)
 python manage.py createsuperuser
-http://localhost:8000/admin
+http://localhost:8000/admin 
+(PARA ACCEDER A LA BBDD, YA CREÉ UN SUPER USUARIO: NAME = user; PASSWORD = user)
+(PARA HACER PRUEBAS DESDE LA WEB, YA CREÉ UN USUARIO NORMAL: NAME = turulete; PASSWORD = eugenio123)

@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from TFGweb.views import saludo, login
+from TFGweb.views import inicio, loginfunct, logoutfunct
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('saludo/', saludo),
-    path('login/', login)
+    path('inicio/', inicio),
+    path('login/', loginfunct),
+    path('logout/', logoutfunct),
 ]
