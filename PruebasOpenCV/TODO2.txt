@@ -1,0 +1,34 @@
+1. HECHO: Fusionar este código con el de Atuch (el de atuch está más completo pero a lo mejor en este se hace algo mejor o mas claro)
+
+    2. que reconozca que es una persona y no una imagen o video suyo (mirando el parpadeo)
+
+    3. siga entrenando al modelo cada vez que se inicie sesión (para que tenga en cuenta el envejecimiento, crecimiento de barba o pelo, ...) (efecto de envejecimiento)
+
+    4. comparar diferentes métodos (con diferentes tamaños, )
+
+        - Comparar haar cascades.
+        - Probar dlib y compararlos con haarcascades.
+        
+        - Buscar y probar otros metodos a parte de opencv.
+        - Comparar los diferentes métodos probados (tiempos, falsos positivos, ...).
+
+
+
+#ATUCH
+Si en el login y register entras sin querer no hay forma para voler atras, yo haria un if en vez de un while. DA IGUAL POR AHORA
+
+Si falla el recognize hacer algo: volver al menu o damos la opcion de reintentar? DA IGUAL POR AHORA
+
+Lo de pestañear lo uqeremos al registrarnos o cada vez que iniciamos sesion? SIEMPRE
+
+AL INICIAR SESION NO DETECTA MUY BIEN LAS CARAS
+
+--REUNION--
+OpenID Connect pareceido a oauth
+autentificacion vs autorizacion
+https://www.returngis.net/2019/04/oauth-2-0-openid-connect-y-json-web-tokens-jwt-que-es-que/
+
+investigarr la tecnogagia web que usemos tipo django
+
+Andrés Teruel Fernández
+Adrián Turiel Charro   
