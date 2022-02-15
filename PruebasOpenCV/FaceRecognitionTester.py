@@ -1,4 +1,4 @@
-from FaceDetection import *
+from FaceRecognition import *
 import shutil
 
 
