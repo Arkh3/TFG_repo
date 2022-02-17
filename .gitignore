@@ -3,4 +3,7 @@
 *.pyc
 
 #ignorar la carpeta users (guarda muchas imagenes y el reconocedor que ocupa mas de 100mb)
-users/*
+users/
+
+database/images
+database/files/*
