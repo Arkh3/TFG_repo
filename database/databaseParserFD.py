@@ -1,37 +1,21 @@
 import os
 import requests
+import cv2 as cv
 
-def prepareFolders(id):
+def prepareFolders():
 
-    path = "database/images/"
-
-    if not os.path.isdir(path):
-        os.mkdir(path)
-
-    path += '/' + id
+    path = "database/imagesFD/"
 
     if not os.path.isdir(path):
         os.mkdir(path)
 
-    auxPath = path + "/test/"
+    path = "database/imagesFDMetadata/"
 
-    if not os.path.isdir(auxPath):
-        os.mkdir(auxPath)
-
-    auxPath = path + "/recognizer/"
-
-    if not os.path.isdir(auxPath):
-        os.mkdir(auxPath)
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
 
-def getImgExtension(imageName):
-
-    file_name, file_extension = os.path.splitext(imageName)
-
-    return file_extension
-
-
-def processLine(line, path):
+def processLine(name, line):
 
     splitLine = line.split()
 
@@ -43,47 +27,87 @@ def processLine(line, path):
     bottom = splitLine[5]
     pose = splitLine[6]
 
-    if float(pose) > 2: # if its a frontal face
-        #download image
+    # if its a frontal face
+    if float(pose) > 2:
         try:
+            extension = os.path.splitext(url)[1]
             r = requests.get(url, allow_redirects=True)
-                
-            open(path + '\\' + id + getImgExtension(url), 'wb').write(r.content)
-            #this part is optional and only for face detection
-            open(path + '\\' + id + '_facePosition.txt', 'wb').write(str.encode(left + ' ' + top + ' ' + right + ' ' + bottom))
+
+            #solo cogemos imágenes cuya request haya fallado o cuya extensión sea .jpg
+            if r.status_code == 403 or r.status_code == 404 or (extension != ".jpg" and extension != ".JPG"):
+                return False
+            else:
+                open("database\\imagesFD\\" + name + '\\' + id + os.path.splitext(url)[1], 'wb').write(r.content)
+                open("database\\imagesFDMetadata\\" + name + '\\' + id + '.txt', 'wb').write(str.encode(left + ' ' + top + ' ' + right + ' ' + bottom))
+                return True
+
         except:
-            print('error en el request')
+            print('Error en el request: ' +  str(id))
+            return False
+
+
+def printRectangles():
+
+    for img in os.listdir("database\\imagesFD\\"):
+
+        file_name, file_extension = os.path.splitext(img)
+        try:
+            image = cv.imread("database\\imagesFD\\" + img)
+
+            info = open("database\\imagesMetadataFD\\" + file_name + '.txt', 'r').readline()
+
+            left, top, right, bottom = info.split()
+            left = round(float(left))
+            top = round(float(top))
+            right = round(float(bottom))
+            bottom = round(float(right))
+
+            cv.rectangle(image,(left, top),(right, bottom),(0,255,0),2)
+
+            cv.imshow(img, image)
+            k = cv.waitKey(0) 
+        except:
+            print('error leyendo la imagen: ' + img)
 
 
 def main():
 
     filesPath = os.getcwd() + '\\database\\files'
+    prepareFolders()
 
     i = 0
-    maxPeople = 10
-    maxImgs = 10
+    maxPeople = 5
+    maxImgs = 20
     
     for file in os.listdir(filesPath):
+        person = file[0:-4]
 
-        id = file[0:-4]
-        prepareFolders(id)
+        path = "database\\imagesFD\\" + person
+
+        if not os.path.isdir(path):
+            os.mkdir(path)
+
+        path = "database\\imagesFDMetadata\\" + person
+
+        if not os.path.isdir(path):
+            os.mkdir(path)
 
         fileReader = open(filesPath + '\\' + file, 'r')
         line = ""
 
-        j = 0
+        j = 1
 
         while line is not None and j < maxImgs:
             line = fileReader.readline()
 
-            storePath = "database\\images\\" + id + "\\test"
-
-            processLine(line, storePath)
-            j += 1
+            if(processLine(person, line)):
+                j += 1
     
         i += 1
         if i >= maxPeople:
             break
+
+    #printRectangles()
 
 
 if __name__ == "__main__":
