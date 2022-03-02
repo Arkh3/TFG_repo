@@ -31,7 +31,7 @@ def prepareFolders(id):
 
 def getImgExtension(imageName):
 
-    file_name, file_extension = os.path.splitext(imageName)
+    _ , file_extension = os.path.splitext(imageName)
 
     return file_extension
 
@@ -51,22 +51,28 @@ def processLine(line, path):
     if float(pose) > 2: # if its a frontal face
         #download image
         try:
+            extension = getImgExtension(url)
             r = requests.get(url, allow_redirects=True)
-            open(path + '\\' + id + getImgExtension(url), 'wb').write(r.content)
+            
+            if r.status_code == 403 or r.status_code == 404 or extension != ".jpg" or extension != ".jpg":
+                return False
+            else:
+                open(path + '\\' + id + extension, 'wb').write(r.content)
+                return True                
 
         except:
-            print('error en el request')
+            print('Error en el request: ' +  str(id))
+            return False
 
 
 def main():
 
     filesPath = os.getcwd() + '\\database\\files'
-
-    i = 0
-    maxPeople = 10
-    maxImgs = 10
     
-    for file in os.listdir(filesPath):
+    maxPeople = 0
+    maxImgs = 100
+    
+    for i, file in enumerate(os.listdir(filesPath)):
 
         id = file[0:-4]
         prepareFolders(id)
@@ -75,7 +81,6 @@ def main():
         line = ""
 
         j = 0
-
         while line is not None and j < maxImgs:
             line = fileReader.readline()
 
@@ -85,10 +90,9 @@ def main():
                 storePath = "database\\images\\" + id + "\\test"
 
 
-            processLine(line, storePath)
-            j += 1
-    
-        i += 1
+            if (processLine(line, storePath)):
+                j += 1
+            
         if i >= maxPeople:
             break
 
