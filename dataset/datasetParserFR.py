@@ -23,11 +23,6 @@ def prepareFolders(id):
     if not os.path.isdir(auxPath):
         os.mkdir(auxPath)
 
-    auxPath = path + "/recognizer/"
-
-    if not os.path.isdir(auxPath):
-        os.mkdir(auxPath)
-
 
 def getImgExtension(imageName):
 
@@ -69,32 +64,38 @@ def main():
 
     filesPath = os.getcwd() + '\\database\\files'
     
-    maxPeople = 0
-    maxImgs = 100
+    maxPeople = 8
+    maxImgs = 250
+    
+    found = False
     
     for i, file in enumerate(os.listdir(filesPath)):
 
         id = file[0:-4]
-        prepareFolders(id)
+        if id == 'A.R._Rahman': # Persona en concreto para no tener que repetir todo el proceso
+            found = True
+        
+        if found:            
+            prepareFolders(id)
 
-        fileReader = open(filesPath + '\\' + file, 'r')
-        line = ""
+            fileReader = open(filesPath + '\\' + file, 'r')
+            line = ""
 
-        j = 0
-        while line is not None and j < maxImgs:
-            line = fileReader.readline()
+            j = 0
+            while line is not None and j < maxImgs:
+                line = fileReader.readline()
 
-            if j < maxImgs * 0.7:
-                storePath = "database\\images\\" + id + "\\train"
-            else:
-                storePath = "database\\images\\" + id + "\\test"
+                if j < maxImgs * 0.7:
+                    storePath = "database\\images\\" + id + "\\train"
+                else:
+                    storePath = "database\\images\\" + id + "\\test"
 
 
-            if (processLine(line, storePath)):
-                j += 1
-            
-        if i >= maxPeople:
-            break
+                if (processLine(line, storePath)):
+                    j += 1
+                
+            if i >= maxPeople:
+                break
 
 
 if __name__ == "__main__":

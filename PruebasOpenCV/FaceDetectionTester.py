@@ -2,21 +2,21 @@
 
 # escoger diferentes haar_cascades, ver diferentes métodos y cómo se comportan
 
- # parámetros que testear: tiempo que tarda en reconocer todas las imágenes (falsos positivos, falsos negativos, ...) ver el error para cada
- # persona por separado y ver los errores más altos para ver si reconoce mal a algun tipo de persona por etnia
+ # parámetros que testear: tiempo que tarda en reconocer todas las imágenes (falsos positivos, falsos negativos, ...)
 from asyncio.windows_events import INFINITE
 from FaceRecognition import *
 import shutil
 import face_recognition
 from shapely.geometry import Polygon
+import math 
 
 # solo debería haber una cara, si hay mas caras contarlas como falsos positivos
 # deberíamos calcular el error con todas las caras reconocidas y coger el mínimo error de todas ellas
 # si el numero de caras reconocidas es 0 suponemos que hay un falso negativo
 def computeError(faces, metadata):
 
-    print("Num faces detected: " + str(len(faces)))
-    print("Original face(left, top, right, bottom): " + metadata)
+    #print("Num faces detected: " + str(len(faces)))
+    #print("Original face(left, top, right, bottom): " + metadata)
 
     falsePositives = len(faces) - 1
 
@@ -29,55 +29,21 @@ def computeError(faces, metadata):
     bottom = round(float(right))
 
     originalRectangle = Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
-
+ 
     for (x,y,w,h) in faces:
-
-        print("Detected face(left, top, right, bottom):", str(x), str(y), str(x + w), str(y+h))
+        #print("Detected face(left, top, right, bottom):", str(x), str(y), str(x + w), str(y+h))
         polygon = Polygon([(x, y), (x + w, y), (x + w, y+h), (x,y+h)])
-        #TODO: imprimir ambos polígonos a ver como se crean + imprimir los rectangulos en las imágenes para ver como actua
         intersection = polygon.intersection(originalRectangle)
         union = polygon.union(originalRectangle)
 
-        error = union.area - intersection.area # esto desfavorece rectángulos grandes (eso bien) pero favorece rectángulos pequeños (mal)
-
-        print("inteseccion, union, error:", str(intersection.area), str(union.area), str(error))
+        error = (union.area - intersection.area) / (originalRectangle.area + 1) # esto desfavorece rectángulos grandes (eso bien) pero favorece rectángulos pequeños (mal)
+        
+        #print("inteseccion, union, error:", str(intersection.area), str(union.area), str(error))
 
         if lowerError > error:
             lowerError = error
 
-    #TODO: terminar de calcular el error como pone en la memoria (hay que dividir entre el la resolucion de la imagen o algo)
     return lowerError, falsePositives
-
-
-def detectFaceTesterOpenCV(frame, cascade, metadata):
-    
-    face_cascade = loadCascade(cascade) 
-
-    frame_gray = frame
-
-    detectionTime = 0
-
-    e1 = cv.getTickCount()
-
-    faces = face_cascade.detectMultiScale(frame_gray)
-    
-    e2 = cv.getTickCount()
-    detectionTime = (e2 - e1)/ cv.getTickFrequency()
-
-    if len(faces) == 0:
-        falseNegatives = 1
-        error = 0
-        falsePositives = 0
-    else:
-        error, falsePositives = computeError(faces, metadata) 
-        falseNegatives = 0
-
-    print("detectionTime error falsePositives falseNegatives:", str(detectionTime), str(error), str(falsePositives), str(falseNegatives))
-    print("----------------------------------------------------------------------------------------")
-
-    printRectangles(frame, faces, metadata)
-
-    return detectionTime, error, falsePositives, falseNegatives
 
 
 def printRectangles(frame, faces, metadata):
@@ -97,30 +63,62 @@ def printRectangles(frame, faces, metadata):
     k = cv.waitKey(0) 
 
 
-def detectFaceTester2(path, originalRectangle):
+def detectFaceTesterOpenCV(frame, cascade, metadata):
+    
+    face_cascade = loadCascade(cascade) 
 
-    image = face_recognition.load_image_file(path)
+    frame_gray = frame
 
     detectionTime = 0
     e1 = cv.getTickCount()
-
-    face_locations = face_recognition.face_locations(image)
-
+    faces = face_cascade.detectMultiScale(frame_gray)
     e2 = cv.getTickCount()
     detectionTime = (e2 - e1)/ cv.getTickFrequency()
 
-    img = cv.imread(path)
+    if len(faces) == 0:
+        falseNegatives = 1
+        error = 0
+        falsePositives = 0
+    else:
+        error, falsePositives = computeError(faces, metadata) 
+        falseNegatives = 0
 
-    for (left, bottom, right, top) in face_locations:
+    #TODO: mejorar el datasetParser para que no coja imágenes vacías
 
-        cv.line(img, (top, left), (top , right), (0, 255, 0), thickness=2)
-        cv.line(img, (bottom, left), (bottom , right), (0, 255, 0), thickness=2)
-        cv.line(img, (top, left), (bottom , left), (0, 255, 0), thickness=2)
-        cv.line(img, (top, right), (bottom , right), (0, 255, 0), thickness=2)
+    #print("detectionTime error falsePositives falseNegatives:", str(detectionTime), str(error), str(falsePositives), str(falseNegatives))
+    #print("----------------------------------------------------------------------------------------")
 
-    saveFace(img, "tester", "\\train\\")
+    #printRectangles(frame, faces, metadata)
 
-    return detectionTime, computeError(face_locations, originalRectangle)
+    return detectionTime, error, falsePositives, falseNegatives
+
+
+def detectFaceTesterDlib(image, metadata, opencvimage):
+
+    detectionTime = 0
+    e1 = cv.getTickCount()
+    face_locations = face_recognition.face_locations(image)
+    e2 = cv.getTickCount()
+    detectionTime = (e2 - e1)/ cv.getTickFrequency()
+
+    face_locations_aux = []
+
+    for (top, right, bottom, left) in face_locations:
+        face_locations_aux.append([left, top, right-left, bottom - top])
+        
+    # hacemos la suposicion que sollo hay una cara por imagen para los falsos positivos y negativos
+    if len(face_locations) == 0:
+        falseNegatives = 1
+        error = 0
+        falsePositives = 0
+    else:
+        error, falsePositives = computeError(face_locations_aux, metadata) 
+        falseNegatives = 0
+
+    #print("detectionTime error falsePositives falseNegatives:", str(detectionTime), str(error), str(falsePositives), str(falseNegatives))
+    #print("----------------------------------------------------------------------------------------")
+
+    return detectionTime, error, falsePositives, falseNegatives
 
 
 def captureAndSaveFacesTester():
@@ -133,51 +131,66 @@ def captureAndSaveFacesTester():
     numImgs = 0
 
     for method in methods:
-        results[method] = {"time": 0, "errors": [], "falsePositives": 0, "falseNegatives":0}
+        results[method] = {"time": 0, "errors": {}, "falsePositives": 0, "falseNegatives":0}
 
     for person in os.listdir(baseImagesPath):
+
+        for method in methods:
+            results[method]["errors"][person] = 0  
+
         for img in os.listdir(baseImagesPath + person):
-            
-            numImgs += 1
+
             imagePath = baseImagesPath + person + '\\' + img
+
             metadataPath = baseMetadataPath + person + '\\' + os.path.splitext(img)[0] + ".txt"
+            
+            image = cv.imread(imagePath)
 
-            metadata = open(metadataPath, 'r').readline()
+            if image is not None:
+                numImgs += 1
+                metadata = open(metadataPath, 'r').readline()
 
-            for method in methods:
-                if method.startswith("haarcascade"): # if opencv
-                    img = cv.imread(imagePath)
-                    print(imagePath, method)
-                    print()
-                    time, error, fp, fn  = detectFaceTesterOpenCV(img, method, metadata)
-                    results[method]["time"] += time
-                    results[method]["errors"].append(error)
-                    results[method]["falsePositives"] += fp
-                    results[method]["falseNegatives"] += fn
+                for method in methods:
+                    if method.startswith("haarcascade"): # if opencv
+                        #print(imagePath, method)
+                        time, error, fp, fn  = detectFaceTesterOpenCV(image, method, metadata)
+                        results[method]["time"] += time
+                        results[method]["errors"][person] += error ** 2
+                        results[method]["falsePositives"] += fp
+                        results[method]["falseNegatives"] += fn
 
-                #elif method == "dlib": # TODO
-                #    time, error, fp += detectFaceTester2(imagePath)
-                #    times[4] += time
-                #    RMSE[4] += error
-                #    falsePositives[4] += fp
+                    elif method == "dlib": # if Dlib
+                        img = face_recognition.load_image_file(imagePath)
+                        #print(imagePath, method)
+                        time, error, fp, fn  = detectFaceTesterDlib(img, metadata, image)
+                        results[method]["time"] += time
+                        results[method]["errors"][person] += error ** 2
+                        results[method]["falsePositives"] += fp
+                        results[method]["falseNegatives"] += fn
+    
+    finalError = {}
 
-        #TODO: Compute RMSE
+    for method in methods:
+        finalError[method] = 0
 
-        # TODO: Print stats
-        """print(" STATS FOR " + person + ":\n")
-        print(" - Image count: ", numImgs, "\n ")
+        for person in results[method]["errors"]:
+            finalError[method] += results[method]["errors"][person]
+            results[method]["errors"][person] = math.sqrt(results[method]["errors"][person]) / numImgs
+
+        finalError[method] = math.sqrt(finalError[method]) / (numImgs - results[method]["falseNegatives"])
+
+        print(" STATS FOR " + method + ":\n")
+        print(" - Image count: ", numImgs)
         print(" - Results: ")
-
-        #TODO: PRINT RMSE Y FALSE POSITIVES
-
-        for i in range (len(haarCascades)):
-            print(haarCascades[i], " - ", times[i])
-
-        print("face_detection library:", times[i+1])"""
+        print("\tThe total error was:", finalError[method])
+        print("\tThe total execution time was:", results[method]["time"])
+        print("\tThe total number of false positives:", results[method]["falsePositives"])
+        print("\tThe total number of false negatives:", results[method]["falseNegatives"])
+        print()
+        #TODO: hacer un estudio de qué personas tenían más error (esto puede ir en future work si no nos da tiempo)
 
 
 def main():
-
     captureAndSaveFacesTester()
 
 
