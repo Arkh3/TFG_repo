@@ -5,6 +5,6 @@
 #ignorar la carpeta users (guarda muchas imagenes y el reconocedor que ocupa mas de 100mb)
 users/
 
-dataset/images*
-dataset/files/*
-dataset_new/images*
+*/dataset/images*
+*/dataset/files/*
+*/dataset_new/images*
