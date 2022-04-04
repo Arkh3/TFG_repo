@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain parking page</title>
+    <link rel="stylesheet" href="/styles/css/index.css">
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/vnd.microsoft.icon" />
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-199510482-1"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-199510482-1');
+    </script>
+
+</head>
+<body>
+    <div class="logo">
+        <a href="https://fasthosts.co.uk/" rel="nofollow">
+            <img src="assets/logo.svg"></img>
+        </a>
+    </div>
+    <div class="wrapper">
+        <div class="main-titles">
+            <h2 class="domainVar"></h2>
+            <h3>
+                This domain name is parked for FREE by <span> <a href="https://fasthosts.co.uk/" rel="nofollow">fasthosts.co.uk</a></span>
+            </h3>
+        </div>
+
+        <div class="main-cards">
+            <div class="card-left-large">
+                <p class="card-title card-title-lg">Looking to buy a similar domain to</p>
+                <p class="card-subtitle"><span class="domainVar"></span>?</p>
+                <a class="btn btn-primary" href="https://www.fasthosts.co.uk/domain-names?&utm_source=domainparking&utm_medium=referral&utm_campaign=fh_parking_dac" rel="nofollow">START SEARCH</a>
+            </div>
+            <div class="card-right-small">
+                <div class="card-row">
+                    <div class="card-column-graphic">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68" height="68" viewBox="0 0 68 68">
+                            <defs>
+                                <clipPath id="clip-path">
+                                <rect id="Rectangle_5188" data-name="Rectangle 5188" width="68" height="68" rx="10" transform="translate(1106 491)" fill="#52c7dc" stroke="#fff" stroke-width="1"/>
+                                </clipPath>
+                            </defs>
+                            <g id="Mask_Group_1361" data-name="Mask Group 1361" transform="translate(-1106 -491)" clip-path="url(#clip-path)">
+                                <rect id="Rectangle_5179" data-name="Rectangle 5179" width="110" height="110" rx="20" transform="translate(1091 480)" fill="#ffcbcb"/>
+                                <ellipse id="Ellipse_2704" data-name="Ellipse 2704" cx="55" cy="45.5" rx="55" ry="45.5" transform="translate(1085 526)" fill="#ffa7a7"/>
+                                <g id="Group_12720" data-name="Group 12720" transform="translate(854.022 -1206.009)">
+                                <rect id="Rectangle_5180" data-name="Rectangle 5180" width="52" height="38" rx="3" transform="translate(259.978 1712.009)" fill="#52c7dc"/>
+                                <path id="Rectangle_5181" data-name="Rectangle 5181" d="M3,0H15a0,0,0,0,1,0,0V38a0,0,0,0,1,0,0H3a3,3,0,0,1-3-3V3A3,3,0,0,1,3,0Z" transform="translate(259.978 1712.009)" fill="#f5f5f5"/>
+                                <rect id="Rectangle_5182" data-name="Rectangle 5182" width="16" height="18" rx="2" transform="translate(276.978 1722.009)" fill="#fff"/>
+                                <rect id="Rectangle_5183" data-name="Rectangle 5183" width="15" height="18" rx="2" transform="translate(294.978 1722.009)" fill="#fff"/>
+                                <rect id="Rectangle_5184" data-name="Rectangle 5184" width="12" height="4" rx="1" transform="translate(276.978 1742.009)" fill="#031a4a"/>
+                                <path id="Rectangle_5185" data-name="Rectangle 5185" d="M3,0H49a3,3,0,0,1,3,3V6a0,0,0,0,1,0,0H0A0,0,0,0,1,0,6V3A3,3,0,0,1,3,0Z" transform="translate(259.978 1712.009)" fill="#0199ff"/>
+                                <rect id="Rectangle_5186" data-name="Rectangle 5186" width="9" height="3" rx="1" transform="translate(262.978 1744.009)" fill="#52c7dc"/>
+                                <rect id="Rectangle_5187" data-name="Rectangle 5187" width="12" height="4" rx="1" transform="translate(294.978 1742.009)" fill="#0199ff"/>
+                                </g>
+                            </g>
+                        </svg>      
+                    </div>
+                    <div class="card-column-info">
+                        <p class="card-title">Is this your domain?</p>
+                        <p class="card-subtitle">Easily turn it into a website in minutes!</p>
+                        <a class="btn hooverable btn-secondary btn-fix" onclick="searchSimilarDomains()" rel="nofollow">GET STARTED</a>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <div class="card-column-graphic">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="68" height="68" viewBox="0 0 68 68">
+                            <defs>
+                                <clipPath id="clip-path">
+                                <rect id="Rectangle_5198" data-name="Rectangle 5198" width="68" height="68" rx="10" transform="translate(1106 491)" fill="#52c7dc" stroke="#fff" stroke-width="1"/>
+                                </clipPath>
+                            </defs>
+                            <g id="Mask_Group_1363" data-name="Mask Group 1363" transform="translate(-1106 -491)" clip-path="url(#clip-path)">
+                                <rect id="Rectangle_5194" data-name="Rectangle 5194" width="110" height="110" rx="20" transform="translate(1091 480)" fill="#fff0b5"/>
+                                <ellipse id="Ellipse_2706" data-name="Ellipse 2706" cx="55" cy="45.5" rx="55" ry="45.5" transform="translate(1085 526)" fill="#ffda84"/>
+                                <g id="Group_12722" data-name="Group 12722" transform="translate(1119.711 505.758)">
+                                <rect id="Rectangle_5195" data-name="Rectangle 5195" width="37.625" height="5.429" rx="2.715" transform="translate(0 36.645) rotate(-45)" fill="#52c7dc"/>
+                                <rect id="Rectangle_5196" data-name="Rectangle 5196" width="12.444" height="5.429" rx="2.715" transform="translate(17.854 18.79) rotate(-45)" fill="#1473e6"/>
+                                <rect id="Rectangle_5197" data-name="Rectangle 5197" width="7.32" height="5.429" rx="2.715" transform="translate(16.909 19.736) rotate(-45)" fill="#031a4a"/>
+                                <path id="Path_16780" data-name="Path 16780" d="M-366.9,348.825a.109.109,0,0,1-.212,0,6.922,6.922,0,0,0-1.76-3.029,6.91,6.91,0,0,0-3.049-1.771.109.109,0,0,1,0-.21,7.047,7.047,0,0,0,3.077-1.829,7.031,7.031,0,0,0,1.731-2.979.109.109,0,0,1,.211,0,6.913,6.913,0,0,0,1.789,3.066,6.911,6.911,0,0,0,3.011,1.742.109.109,0,0,1,0,.212,6.912,6.912,0,0,0-3.06,1.791A6.9,6.9,0,0,0-366.9,348.825Z" transform="translate(384.647 -337.071)" fill="#031a4a"/>
+                                <path id="Path_16781" data-name="Path 16781" d="M-344.883,357.87a.085.085,0,0,1-.164,0,5.343,5.343,0,0,0-1.362-2.345,5.35,5.35,0,0,0-2.36-1.37.085.085,0,0,1,0-.164,5.459,5.459,0,0,0,2.382-1.415,5.458,5.458,0,0,0,1.34-2.306.084.084,0,0,1,.163,0,5.35,5.35,0,0,0,1.385,2.374,5.341,5.341,0,0,0,2.331,1.349.085.085,0,0,1,0,.164,5.354,5.354,0,0,0-2.369,1.386A5.357,5.357,0,0,0-344.883,357.87Z" transform="translate(381.685 -338.086)" fill="#031a4a"/>
+                                <path id="Path_16782" data-name="Path 16782" d="M-344.069,344.791a.085.085,0,0,1-.132.1,5.345,5.345,0,0,0-2.5-1.062,5.342,5.342,0,0,0-2.711.315.084.084,0,0,1-.1-.129,5.456,5.456,0,0,0,1.06-2.56,5.455,5.455,0,0,0-.307-2.649.084.084,0,0,1,.131-.1,5.336,5.336,0,0,0,2.53,1.072,5.34,5.34,0,0,0,2.674-.316.085.085,0,0,1,.1.132,5.356,5.356,0,0,0-1.067,2.529A5.339,5.339,0,0,0-344.069,344.791Z" transform="translate(382.213 -338.687)" fill="#031a4a"/>
+                                </g>
+                            </g>
+                        </svg>                                     
+                    </div>
+                    <div class="card-column-info">
+                        <p class="card-title">Do more with your domain</p>
+                        <p class="card-subtitle">Access all the tools you need for online success.</p>
+                        <a class="btn hooverable btn-secondary btn-fix" href="https://www.fasthosts.co.uk/get-online?utm_source=domainparking&utm_medium=referral&utm_campaign=fh_parking_do_more" rel="nofollow"> Find out more </a>
+                    </div>
+                </div>
+            </div>                
+        </div>
+
+        <div class="main-footer">
+            <h5>Need help?</h5>
+            <h6>Our friendly team of experts are always here to answer your questions. Get real support from real people, 24/7.</h6>
+            <a class="btn hooverable " href="https://www.fasthosts.co.uk/contact?utm_source=domainparking&utm_medium=referral&utm_campaign=fh_parking_contact" rel="nofollow">CONTACT US</a>
+        </div>
+
+    </div>
+</body>
+<script>
+let elements = document.getElementsByClassName('domainVar')
+let cleanHostname = document.location.hostname.indexOf('www.') && document.location.hostname || document.location.hostname.replace('www.', '');
+for(let i = 0; i< elements.length; i++){
+    elements[i].innerHTML =cleanHostname;
+}
+const searchSimilarDomains = ()=>{
+    window.location.href = `https://admin.fasthosts.co.uk/purchase/domain/search/?domain=${cleanHostname}&utm_source=domainparking&utm_medium=referral&utm_campaign=fh_parking_dac`;
+}
+
+</script>
+</html>
