@@ -68,7 +68,7 @@ def initUser():
         opc = int(input()) # si no escribe un num hacr algo para que no explote
 
 
-    modelo = 'EigenFaces' # 'LBPH', 'FisherFaces'
+    modelo = 'LBPH' #'EigenFaces' # 'LBPH', 'FisherFaces'
 
     if opc == 2:
         register(modelo)
@@ -214,7 +214,8 @@ def recognize(modelo, user):
 
         id_, conf = recognizer.predict(image) # TODO mirar en la documentacion pero se puede hacer que esto te devuelva un % con la confianza que reconoce
 
-        if conf > 0: # TODO: jugar con los valores, para mejorar el reconocimiento
+        print(conf)
+        if conf < 80: # TODO: jugar con los valores, para mejorar el reconocimiento
             aciertos += 1
         else:
             fallos += 1
@@ -233,7 +234,7 @@ def detectMainFace(frame):
     face_cascade = loadCascade("haarcascade_frontalface_alt2.xml")
 
     frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    frame_gray = cv.equalizeHist(frame_gray) # TODO: probar a hacerlo sin esto para ver las diferencias en optimización y cosas de esas
+    #frame_gray = cv.equalizeHist(frame_gray) # TODO: probar a hacerlo sin esto para ver las diferencias en optimización y cosas de esas
     
     # Detectar caras  
     faces = face_cascade.detectMultiScale(frame_gray) # ver cual es el tamaño mínimo de cara que debería reconocer (no queremos que reconozca caras muy pequeñas)
@@ -361,3 +362,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    
+    
+    # TODO: Con este cod si le damos varias veces a iniciar sesion no se borrar las imgs anteriores se siguen acumulando, para un prototipo mas real eso no tendria sentido
