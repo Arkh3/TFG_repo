@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="es" dir="ltr"><head><style nonce="eZ31VdKxrVQsvMMbz5jDCA">
+a, a:link, a:visited, a:active, a:hover {
+  color: #1a73e8;
+  text-decoration: none;
+}
+body {
+  font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  text-align: center;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+.box {
+  border: 1px solid #dadce0;
+  box-sizing: border-box;
+  border-radius: 8px;
+  margin: 24px auto 5px auto;
+  max-width: 520px;
+  padding: 24px;
+}
+h1 {
+  color: #2c2c2c;
+  font-size: 24px;
+  hyphens: auto;
+  margin: 24px 0;
+}
+p, .sub, .contentText {
+  color: #5f6368;;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+  text-align: left;
+}
+.signin {
+  text-align: right;
+}
+.image {
+  display: block;
+  margin: 14px auto;
+}
+.basebutton {
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  height: 36px;
+  margin: 12px 4px 0;
+  padding: 10px 24px;
+}
+a.button {
+  color: #fff;
+}
+button, .button {
+  background-color: #1a73e8;
+  border: none;
+  color: #fff;
+}
+input.button {
+  -webkit-appearance: none;
+}
+.error {
+  border: 2px solid #d93025;
+  border-radius: 5px;
+  color: #d93025;
+  margin: auto;
+  padding: 5px;
+}
+.footer {
+  margin-top: 16px;
+}
+.footer a {
+  margin-left: 24px;
+  white-space: nowrap;
+}
+.footer a, .footer select, .footer input {
+  color: #757575;
+  font-size: 12px;
+}
+.languagepicker {
+  display: inline-flex;
+  margin: 2px 0;
+}
+#languageform,
+#languageselect {
+  margin: 0 2px;
+}
+#languageselect {
+  color: #757575;
+}
+.detailspage {
+  margin: 24px auto 0 auto;
+  max-width: 700px;
+}
+.detailspage h1, .detailspage h2 {
+  font-size: 22px
+}
+.setting {
+  border: 1px solid #dadce0;
+  box-sizing: border-box;
+  border-radius: 8px;
+  margin-bottom: 11px;
+  padding: 24px 24px 20px 24px;
+  text-align: right;
+}
+.sub {
+  padding: 24px 24px 20px 24px;
+}
+hr {
+  margin: 12px -24px 12px;
+  border: 0;
+  border-top: 1px solid #dadce0;
+}
+fieldset {
+  border: none;
+  padding: 0;
+}
+label {
+  margin: 24px;
+}
+td {
+  vertical-align: top;
+}
+.setting h2, .setting h3, h4 {
+  color: #3c4043;
+  margin: 0;
+  text-align: left;
+}
+.yt-text {
+  color: #5f6368;
+  font-size: 14px;
+  font-weight: 300;
+}
+.productLogoContainer {
+  margin: auto;
+  max-width: 360px;
+}
+
+/** Narrow screen (for example a mobile device). */
+@media only screen and (max-width: 480px) {
+  body {
+    margin: 18px 14px;
+  }
+  .imgContainer {
+    min-width: 96px;
+  }
+  .hideOnSmallWidth {
+    display: none;
+  }
+  .footer form {
+    margin-bottom: 3px;
+  }
+}
+
+@media only screen and (max-width: 380px) {
+  .imgContainer {
+    min-width: 72px;
+  }
+}
+
+/** Normal/non-narrow screen. */
+@media not screen and (max-width: 480px) {
+  body {
+    margin: 18px 25px;
+  }
+  .imgContainer {
+    width: 51%;
+  }
+  .hideOnNormalWidth {
+    display: none;
+  }
+  .footer form {
+    display: inline;
+  }
+}
+</style><title>Antes de ir a YouTube</title><meta name="viewport" content="initial-scale=1, maximum-scale=5, width=device-width"><link rel="shortcut icon" href="//www.google.com/favicon.ico"></head><body><div class="signin"><a href="https://accounts.google.com/ServiceLogin?hl=es&amp;continue=https://www.youtube.com/channel/UCuiK2XdDcyAd7TS9ioMqx6A?cbrd%3D1&amp;gae=cb-23983171" class="basebutton button">Iniciar sesión</a></div><div class="box"><img src="//www.gstatic.com/ac/cb/cb_yt_logo_d_header_118x26_4dfe7c3d17767ffd2294ae90fb54337e.png" srcset="//www.gstatic.com/ac/cb/cb_yt_logo_d_header_236x52_32f50a7f5baad56e4faf48252fbc19d6.png 2x" width="93" height="20" alt="YouTube"> <span class="yt-text">una empresa de Google</span><div class="productLogoContainer"><img src="https://www.gstatic.com/ac/cb/scene_cookie_wall_youtube.svg" alt="" width="100%" height="100%" class="image" aria-hidden="true"></div><h1>Antes de ir a YouTube</h1><div class="contentText">En Google utilizamos <a href="https://policies.google.com/technologies/cookies?hl=es&utm_source=ucb" target="_blank">cookies</a> y datos para:<ul><li>Proporcionar y mantener servicios, como hacer un seguimiento de las interrupciones y prevenir el spam, el fraude y los abusos</li><li>Medir la interacción de la audiencia y estadísticas de los sitios para entender cómo se utilizan nuestros servicios</li></ul>Si aceptas, también usaremos las cookies y los datos para:<ul><li>Mejorar la calidad de nuestros servicios y desarrollar otros nuevos</li><li>Mostrar anuncios y medir su eficacia</li><li>Mostrar contenido personalizado en función de tus ajustes</li><li>Mostrar anuncios genéricos o personalizados, en función de tus ajustes, en Google y en la Web</li></ul>Con respecto al contenido y los anuncios no personalizados, lo que veas puede estar influido por factores como lo que estés viendo en ese momento y tu ubicación (el servicio de anuncios se basa en la ubicación general). El contenido y los anuncios personalizados se pueden basar, además de en esos criterios, en tu actividad, como las búsquedas que hagas en Google y los vídeos que veas en YouTube. Los anuncios y el contenido personalizados incluyen, entre otras cosas, resultados y recomendaciones más relevantes, una página de inicio de YouTube personalizada y anuncios adaptados a tus intereses.<p>Haz clic en Personalizar para ver las opciones disponibles, como los controles que permiten rechazar el uso de cookies para la personalización e información sobre los controles del navegador que permiten rechazar parte o la totalidad de las cookies para otros usos. También puedes visitar g.co/privacytools en cualquier momento.</p></div><div><a href="https://consent.youtube.com/dl?continue=https://www.youtube.com/channel/UCuiK2XdDcyAd7TS9ioMqx6A?cbrd%3D1&amp;gl=ES&amp;hl=es&amp;pc=yt&amp;uxe=23983171&amp;src=1" class="basebutton button">Personalizar</a><form action="https://consent.youtube.com/s" method="POST" style="display:inline;"><input type="hidden" name="gl" value="ES"><input type="hidden" name="m" value="0"><input type="hidden" name="pc" value="yt"><input type="hidden" name="continue" value="https://www.youtube.com/channel/UCuiK2XdDcyAd7TS9ioMqx6A?cbrd=1"><input type="hidden" name="ca" value="r"><input type="hidden" name="x" value="8"><input type="hidden" name="v" value="cb.20220301-11-p0.es+FX+769"><input type="hidden" name="t" value="ADw3F8h7eGvEtu9qdLCfIfrj2KtVeN5cqQ:1646597664399"><input type="hidden" name="hl" value="es"><input type="hidden" name="src" value="1"><input type="hidden" name="uxe" value="23983171"><input type="submit" value="Acepto" class="basebutton button" aria-label="Aceptar el uso de cookies y otros datos para las finalidades descritas"/></form></div></div><div class="footer"><form action="https://consent.youtube.com/ml" method="get"><select id="languageselect" name="hl"><option value="af">Afrikaans</option><option value="az">azərbaycan</option><option value="bs">bosanski</option><option value="ca">català</option><option value="cs">Čeština</option><option value="cy">Cymraeg</option><option value="da">Dansk</option><option value="de">Deutsch</option><option value="et">eesti</option><option value="en-GB">English&nbsp;(United Kingdom)</option><option value="en">English&nbsp;(United States)</option><option value="es" selected>Español&nbsp;(España)</option><option value="es-419">Español&nbsp;(Latinoamérica)</option><option value="eu">euskara</option><option value="fil">Filipino</option><option value="fr-CA">Français&nbsp;(Canada)</option><option value="fr">Français&nbsp;(France)</option><option value="ga">Gaeilge</option><option value="gl">galego</option><option value="hr">Hrvatski</option><option value="id">Indonesia</option><option value="zu">isiZulu</option><option value="is">íslenska</option><option value="it">Italiano</option><option value="sw">Kiswahili</option><option value="lv">latviešu</option><option value="lt">lietuvių</option><option value="hu">magyar</option><option value="ms">Melayu</option><option value="nl">Nederlands</option><option value="no">norsk</option><option value="uz">o‘zbek</option><option value="pl">polski</option><option value="pt-BR">Português&nbsp;(Brasil)</option><option value="pt-PT">Português&nbsp;(Portugal)</option><option value="ro">română</option><option value="sq">shqip</option><option value="sk">Slovenčina</option><option value="sl">slovenščina</option><option value="sr-Latn">srpski (latinica)</option><option value="fi">Suomi</option><option value="sv">Svenska</option><option value="vi">Tiếng Việt</option><option value="tr">Türkçe</option><option value="el">Ελληνικά</option><option value="be">беларуская</option><option value="bg">български</option><option value="ky">кыргызча</option><option value="kk">қазақ тілі</option><option value="mk">македонски</option><option value="mn">монгол</option><option value="ru">Русский</option><option value="sr">српски</option><option value="uk">Українська</option><option value="ka">ქართული</option><option value="hy">հայերեն</option><option value="iw">עברית</option><option value="ur">اردو</option><option value="ar">العربية</option><option value="fa">فارسی</option><option value="am">አማርኛ</option><option value="ne">नेपाली</option><option value="mr">मराठी</option><option value="hi">हिन्दी</option><option value="as">অসমীয়া</option><option value="bn">বাংলা</option><option value="pa">ਪੰਜਾਬੀ</option><option value="gu">ગુજરાતી</option><option value="or">ଓଡ଼ିଆ</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="kn">ಕನ್ನಡ</option><option value="ml">മലയാളം</option><option value="si">සිංහල</option><option value="th">ไทย</option><option value="lo">ລາວ</option><option value="my">မြန်မာ</option><option value="km">ខ្មែរ</option><option value="ko">한국어</option><option value="ja">日本語</option><option value="zh-CN">简体中文</option><option value="zh-TW">繁體中文</option><option value="zh-HK">繁體中文&nbsp;(香港)</option></select><input type="hidden" name="oldhl" value="es"><input type="hidden" name="gl" value="ES"><input type="hidden" name="m" value="0"><input type="hidden" name="pc" value="yt"><input type="hidden" name="continue" value="https://www.youtube.com/channel/UCuiK2XdDcyAd7TS9ioMqx6A?cbrd=1"><input type="hidden" name="src" value="1"><input type="submit" value="Cómo cambiar de idioma"></form><a href="https://policies.google.com/privacy?hl=es&utm_source=ucb">Política de Privacidad</a> <a href="https://policies.google.com/terms?hl=es&utm_source=ucb">Términos del Servicio</a></div></body></html>

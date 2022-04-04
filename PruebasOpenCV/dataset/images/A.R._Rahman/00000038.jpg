@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Construction vancouverdesi.com</title>
+    <link href="/css?v=OjrvTxN2IKZeBaOxfhGcrdvvl28cfIgQAkYLJATqco41" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700|Montserrat:400,700" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="/js/headerScripts?v=QtxRrbVxHAK-b5ZowWqv6Wt7oUOJAggG80vl1X-EGBM1"></script>
+
+    <!--[if lte IE 8]>
+        <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+    <meta name="description" />
+    <meta name="keywords" />
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="https://www.webnames.ca" rel="nofollow">
+                <img class="logo" src="/Content/images/webnames-ca-red.png" alt="Webnames.ca">
+            </a>
+        </div>
+        
+    </header>
+    
+
+
+<main class="v-development">
+    <div class="container">
+        <h1 class="website">
+            vancouverdesi.com
+            <span>This website is under development.</span>
+        </h1>
+    </div>
+    <div class="domain-search search-typeahead">
+        <div class="container">
+            <form id="inline-search-form" name="headersearchform" method="get" action="https://www.webnames.ca/domain-registration/search/">
+                <input placeholder="Find your domain name..." name="domain" autocomplete="off" spellcheck="false" type="text" />
+                <button class="btn btn-action" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <div class="upsell-wrap">
+            <div class="row upsell">
+    <div class="col-sm-4">
+        <h3>Find the domain name that will define your brand</h3>
+        <p>Choose from 500+ different domain extensions and our marketplace of premium domains.</p>
+        <a href="https://www.webnames.ca/aftermarket/search" rel="nofollow" class="btn btn-primary">Search Now</a>
+    </div>
+    <div class="col-sm-8 left-border">        
+        <h4 class="best-deal">Add a 1-year Value Hosting plan to your domain and get the following for only CAD $4.99/month:</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <ul class="checklist">
+                    <li><i class="fa fa-check"></i> Free domain</li>
+                    <li><i class="fa fa-check"></i> 15 email accounts</li>
+                    <li><i class="fa fa-check"></i> 5 GB SSD storage and unlimited bandwidth</li>
+                    <li><i class="fa fa-check"></i> Easy to use Plesk panel</li>
+                    <li><i class="fa fa-check"></i> One-click install WordPress, Drupal, Joomla & more</li>
+                </ul>
+            </div>
+            <div class="col-sm-6">
+                <ul class="checklist">
+                    <li><i class="fa fa-check"></i> 30-day money back guarantee</li>
+                    <li><i class="fa fa-check"></i> 99.9% uptime guarantee</li>
+                    <li class="hidden-sm"><i class="fa fa-check"></i> Toll free customer support 7 days/week</li>
+                </ul>
+                <a href="https://www.webnames.ca/hosting/web-hosting" rel="nofollow" class="btn btn-primary">Learn More</a>
+            </div>
+        </div>        
+    </div>
+</div>
+            <hr class="hidden-xs" />
+            <div class="support">
+    <img class="img-responsive" src="/Content/images/contact-portrait.png" alt="Contact support" />
+    <div class="support-text">
+        <h2 class="title">
+            We make things easy.
+            <span>We're just a phone call or <a href="mailto:support@webnames.ca" rel="nofollow">email</a> away, seven days a week.</span>
+        </h2>
+        <h4 class="number">Call 1-866-221-7878</h4>
+    </div>
+</div>
+        </div>
+    </div>
+    <footer>
+    <div class="container">
+        <ul class="no-bullets">
+            <li><a href="https://www.webnames.ca/domain-registration/search/" rel="nofollow">Domain Search</a></li> |
+            <li><a href="https://www.webnames.ca/domain/transfer/" rel="nofollow">Domain Transfers</a></li> |
+            <li><a href="https://www.webnames.ca/domain-registration/new-domain-name-launch-schedule.aspx" rel="nofollow">New gTLDs</a></li> |
+            <li><a href="https://www.webnames.ca/hosting/web-hosting" rel="nofollow">Web Hosting</a></li> |
+            <li><a href="https://www.webnames.ca/ssl/ssl-certificates" rel="nofollow">SSL Certificates</a></li> |
+            <li><a href="https://webnamescorporate.com/" rel="nofollow">Corporate Services</a></li>
+        </ul>
+        <p class="copy-info">
+            Copyright © 2000 - 2022 Webnames.ca Inc.<br />
+            Webnames™ and Webnames.ca™ are registered trademarks of Webnames.ca Inc.<br />
+            All Rights Reserved.
+        </p>
+    </div>
+</footer>
+</main>
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/js/footerScripts?v=3kBLM3vjNjJAzJp6onzt-qo5z_OuUVGMSFqWzWGuw801"></script>
+
+    
+</body>
+</html>

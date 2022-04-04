@@ -1,128 +1,193 @@
-# este documento está hecho para testear la función de detectMainFace() de FaceDetection.py
-
-# escoger diferentes haar_cascades, ver diferentes métodos y cómo se comportan
+from asyncio.windows_events import INFINITE
 from FaceRecognition import *
 import shutil
 import face_recognition
+from shapely.geometry import Polygon
+import math 
+import time
 
 
-def detectFaceTester(frame, cascade):
+def computeError(faces, metadata):
+
+    #print("Num faces detected: " + str(len(faces)))
     
-    face_cascade = loadCascade(cascade) 
+    falsePositives = len(faces) - 1
 
-    frame_gray = frame
-    # frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY) # probar a hacer el gris antes y despues de la detección
-    # frame_gray = cv.equalizeHist(frame_gray) 
+    lowerError = 9999999999999999999999999
 
-    detectionTime = 0
+    img, left, top, width, height = metadata
+    left = round(float(left))
+    top = round(float(top))
+    width = round(float(width))
+    height = round(float(height))
 
-    e1 = cv.getTickCount()
+    #print("Original face(left, top, right, bottom): ", str(left), str(top), str(left + width), str(top + height))
 
-    faces = face_cascade.detectMultiScale(frame_gray)
-    
-    e2 = cv.getTickCount()
-    detectionTime = (e2 - e1)/ cv.getTickFrequency()
+    originalRectangle = Polygon([(left, top), (left + width, top), (left + width, top + height), (left, top + height)])
+ 
+    for (x,y,w,h) in faces:
+    #    print("Detected face(left, top, right, bottom):", str(x), str(y), str(x + w), str(y+h))
+        polygon = Polygon([(x, y), (x + w, y), (x + w, y+h), (x,y+h)])
+        intersection = polygon.intersection(originalRectangle)
+        union = polygon.union(originalRectangle)
+
+        #TODO: SE Pueden ver los falsos positivos si la interseccion es 0 no:?
+
+        error = (union.area - intersection.area) / (originalRectangle.area + 1)
+        
+    #    print("inteseccion, union, error:", str(intersection.area), str(union.area), str(error))
+
+        if lowerError > error:
+            lowerError = error
+
+    return lowerError, falsePositives
+
+
+def printRectangles(frame, faces, metadata):
+
+    image, left, top, width, height = metadata
+    left = round(float(left))
+    top = round(float(top))
+    width = round(float(width))
+    height = round(float(height))
+
+    cv.rectangle(frame,(left, top),(left + width, top + height),(0,0,255),2)
 
     for (x,y,w,h) in faces:
         cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-    # cv.imshow('Capture - Faces detected', frame_gray)
-    # cv.waitKey(0)
-
-    saveFace(frame_gray, "tester", "\\train\\")
-
-    return detectionTime
+    cv.imshow("frame", frame)
+    k = cv.waitKey(0) 
 
 
-def detectFaceTester2(path):
+def detectFaceTesterOpenCV(frame, cascade, metadata):
+    
+    face_cascade = loadCascade(cascade) 
 
-    image = face_recognition.load_image_file(path)
+    frame_gray = frame
 
     detectionTime = 0
     e1 = cv.getTickCount()
-
-    face_locations = face_recognition.face_locations(image)
-
+    faces = face_cascade.detectMultiScale(frame_gray)
     e2 = cv.getTickCount()
     detectionTime = (e2 - e1)/ cv.getTickFrequency()
 
-    img = cv.imread(path)
+    if len(faces) == 0:
+        falseNegatives = 1
+        error = 0
+        falsePositives = 0
+    else:
+        error, falsePositives = computeError(faces, metadata) 
+        falseNegatives = 0
 
-    for (left, bottom, right, top) in face_locations:
+    #print("detectionTime error falsePositives falseNegatives:", str(detectionTime), str(error), str(falsePositives), str(falseNegatives))
+    #print("----------------------------------------------------------------------------------------")
 
-        cv.line(img, (top, left), (top , right), (0, 255, 0), thickness=2)
-        cv.line(img, (bottom, left), (bottom , right), (0, 255, 0), thickness=2)
-        cv.line(img, (top, left), (bottom , left), (0, 255, 0), thickness=2)
-        cv.line(img, (top, right), (bottom , right), (0, 255, 0), thickness=2)
+    #printRectangles(frame, faces, metadata)
 
-    # cv.imshow('Capture - Faces detected', img)
-    # cv.waitKey(0)
+    return detectionTime, error, falsePositives, falseNegatives
 
-    saveFace(img, "tester", "\\train\\")
 
-    return detectionTime
+def detectFaceTesterDlib(image, metadata, opencvimage):
+
+    detectionTime = 0
+    e1 = cv.getTickCount()
+    face_locations = face_recognition.face_locations(image)
+    e2 = cv.getTickCount()
+    detectionTime = (e2 - e1)/ cv.getTickFrequency()
+
+    face_locations_aux = []
+
+    for (top, right, bottom, left) in face_locations:
+        face_locations_aux.append([left, top, right-left, bottom - top])
         
+    # hacemos la suposicion que sollo hay una cara por imagen para los falsos positivos y negativos
+    if len(face_locations) == 0:
+        falseNegatives = 1
+        error = 0
+        falsePositives = 0
+    else:
+        error, falsePositives = computeError(face_locations_aux, metadata) 
+        falseNegatives = 0
 
-def captureAndSaveFacesTester():
+    #print("detectionTime error falsePositives falseNegatives:", str(detectionTime), str(error), str(falsePositives), str(falseNegatives))
+    #print("----------------------------------------------------------------------------------------")
 
-    path = 'PruebasOpenCV\\testing\\images\\'
+    #printRectangles(opencvimage, face_locations_aux, metadata)
 
-    numImgs = 0
-
-    haarCascades = ["haarcascade_frontalface_alt.xml", "haarcascade_frontalface_alt2.xml", "haarcascade_frontalface_alt_tree.xml", "haarcascade_frontalface_default.xml"]
-    results = [0,0,0,0,0]
-
-    for img in os.listdir(path):
-
-        numImgs += 1
-        imagePath = path + img
-
-        for i in range (len(haarCascades)):
-            img = cv.imread(imagePath)
-            results[i] += detectFaceTester(img, haarCascades[i])
-    
-        results[4] += detectFaceTester2(imagePath)
-
-    print("STATS:\n")
-    print(" - Image count: ", numImgs, "\n ")
-    print(" - Results: ")
-
-    for i in range (len(haarCascades)):
-        print(haarCascades[i], " - ", results[i])
-
-    print("face_detection library:", results[i+1])
+    return detectionTime, error, falsePositives, falseNegatives
 
 
-def test(user):
+def faceDetectionTester(maxImgs):
 
-    # parámetros que testear: tiempo que tarda en reconocer todas las imágenes (probar con diferentes tamaños del conjunto de entrenamiento, 
-    #   probar como se comportan (teniendo en cuenta el tamaño del conjunto de entrenamiento) (falsos positivos, falsos negativos, ...)
+    methods = ["haarcascade_frontalface_alt.xml", "haarcascade_frontalface_alt2.xml", "haarcascade_frontalface_alt_tree.xml", "haarcascade_frontalface_default.xml", "dlib"]
+    results = {}
 
-    testPath = "PruebasOpenCV\\recognize\\"
-    trainPath = "PruebasOpenCV\\recognize\\"
+    for method in methods:
+        results[method] = {"time": 0, "errors": 0, "falsePositives": 0, "falseNegatives":0}
 
-    captureAndSaveFacesTester()
+    metadata = open('dataset_new\list_bbox_celeba.txt', 'r')
+    metadata.readline()
+    metadata.readline()
+
+    line = ""
+
+    j = 1
+
+    while line is not None and j < maxImgs:
+
+        line = metadata.readline()
+
+        img, x, y, w, h = line.split()
+        x = int(x)
+        y = int(y)
+        w = int(w)
+        h = int(h)
 
 
-def removeTesterFolder():
+        print(img, end="\r")
+        metadt = [img, x, y, w, h]
 
-    pathToRemove = "users\\tester" 
-    try:
-        shutil.rmtree(pathToRemove)
-    except OSError as e:
-        print("Error: %s - %s." % (e.filename, e.strerror))
+        image = cv.imread("D:\\Andres\\Escritorio\\TFG\\img_celeba\\" + img)
+
+        for method in methods:
+            if method.startswith("haarcascade"): # if opencv
+                #print(img, method)
+                time, error, fp, fn  = detectFaceTesterOpenCV(image, method, metadt)
+                results[method]["time"] += time
+                results[method]["errors"] += error ** 2
+                results[method]["falsePositives"] += fp
+                results[method]["falseNegatives"] += fn
+
+            elif method == "dlib": # if Dlib
+                aux = face_recognition.load_image_file("D:\\Andres\\Escritorio\\TFG\\img_celeba\\" + img)
+                #print(img, method)
+                time, error, fp, fn  = detectFaceTesterDlib(aux, metadt, image)
+                results[method]["time"] += time
+                results[method]["errors"] += error ** 2
+                results[method]["falsePositives"] += fp
+                results[method]["falseNegatives"] += fn
+
+        j += 1
+
+    finalError = {}
+
+    for method in methods:
+
+        results[method]["errors"] = math.sqrt(results[method]["errors"]) / (maxImgs - results[method]["falseNegatives"])
+
+        print(" STATS FOR " + method + ":\n")
+        print(" - Image count: ", maxImgs)
+        print(" - Results: ")
+        print("\tThe total error was:",  results[method]["errors"])
+        print("\tThe total execution time was:", results[method]["time"])
+        print("\tThe total number of false positives:", results[method]["falsePositives"])
+        print("\tThe total number of false negatives:", results[method]["falseNegatives"])
+        print()
 
 
 def main():
-
-    global user_id
-    user_id = "tester"
-
-    prepareFolders(user_id)
-
-    test(user_id)
-
-    # removeTesterFolder()
+    faceDetectionTester(2000)
 
 
 if __name__ == "__main__":
