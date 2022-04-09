@@ -1,0 +1,24 @@
+{% extends "common.html" %}
+
+{% block content %}
+
+<h1 class="text-center">Estos es REGISTRO 1</h1> 
+
+{% comment %} <form action='/registro2/' method='GET'>
+    <input type="text" name="uname" value="Nombre"><br>
+    <input type="email" name="umail" value="Correo@electronico"><br>
+    <input type='submit' value='next_step'>
+</form> {% endcomment %}
+
+{% if form.errors %}
+    <p style="color:red;"> Revisa este campo</p>
+{% endif %}
+
+<form action='/registro2/' method='GET'>
+    <table>
+        {{form.as_table}}
+    </table>
+    <input type='submit' value='next_step'>
+</form>
+
+{% endblock %}

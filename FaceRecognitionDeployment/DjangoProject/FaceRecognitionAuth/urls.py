@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from FaceRecognitionAuth.views import login
+from FaceRecognitionAuth.views import registro_1, registro_2, user_logged
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', login),
-]
+    path('registro1/', registro_1),
+    path('registro2/', registro_2),
+    path('user_logged/', user_logged),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
