@@ -9,3 +9,4 @@ users/
 */dataset/files/*
 */dataset_new/images*
 FaceRecognitionDeployment/data
+PruebasOpenCV/datasets/
