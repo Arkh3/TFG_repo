@@ -1,4 +1,4 @@
-version: "1.0"
+version: "2.2"
 
 services:
   db:
@@ -13,7 +13,7 @@ services:
     build: .
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./DjangoProject:/code
+      - ./fr_project:/code
     ports:
       - "8000:8000"
     environment:

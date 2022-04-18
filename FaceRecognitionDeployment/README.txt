@@ -1,3 +1,5 @@
+#RUN ALL THE COMMANDS IN A POWERSHELL
+
 Start the deployment:
 docker-compose run web django-admin startproject <django-project> .
 
@@ -7,6 +9,10 @@ docker-compose up
 Connect to the docker:/code and run
 python3 manage.py migrate
 
+
+
 -------------------------------------------------
 
-PARA EMPEZAR UNA APLICACIÓN CON SU BASE DE DATOS: Ver el video de pildoras informaticas de BBDD II
+python3 manage.py check authentication
+python3 manage.py makemigrations
+python3 manage.py sqlmigrate authentication 0001
