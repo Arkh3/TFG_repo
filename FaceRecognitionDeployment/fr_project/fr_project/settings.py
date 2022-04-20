@@ -129,9 +129,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
 # ================== ATUCH AND ANDREWS ZONE ===========================
-
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'authentication.backends.FR_backend']# TODO: probar a quitar el primer backedn
 

@@ -1,0 +1,36 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+
+<div class="login-box">
+    <h2>Login</h2>
+    <form method='POST'> 
+         
+      {% for field in form %}
+        <div class="user-box">
+            <input name="" required="">
+            {{field.label_tag}}
+        </div>
+      {% endfor %}
+      
+      <p class="change-form">
+        ¿No tienes cuenta? <a  href="{% url 'register' %}"> Regístrate</a>
+      <p> 
+      
+      <p class="change-form">
+        ¿Quiere iniciar sesión <a  href="{% url 'login1' %}"> facialmente</a> ?
+      <p>
+        
+      <div class="user-button">
+        <a href="{% url 'login2' %}" class="justify-content-center submit">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+        </a>
+    </div>
+    </form>
+  </div>
+
+{% endblock %}
