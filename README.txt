@@ -11,3 +11,7 @@
 - AHORA MISMO ESTA UN POCO GUARRO, PUES SE LO PASO COMO ARG DE UNA CLASE A OTRA Y LOS TENGO OCULTOS EN EL FORM
 - SE QUE LAS PASSWORD DEBERIAN ESTAR EN EL PRIMER REGSITRO, ERA PARA PROBAR SOLO EL PASO DE DATOS
 - eL REGISTRO 3E ES PARA VER COMO QUEDARIA SI LO HACEMOS TODO DIRECTAMENTE EN UNA VISTA
+----------------------------
+----------------------------
+En registro uno cambiar el <a href="{% url 'login' %}" class="justify-content-center">
+y al ser login creo que sería post

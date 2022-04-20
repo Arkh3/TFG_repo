@@ -1,0 +1,29 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+
+<div class="login-box">
+    <h2>Login</h2>
+    <form method='POST'> 
+      
+      <p class="change-form">
+        ¿No tienes cuenta? <a  href="{% url 'register' %}"> Regístrate</a>
+      <p> 
+      
+      <p class="change-form">
+        ¿Quiere iniciar sesión usando<a  href="{% url 'login2' %}"> contraseña</a> ?
+      <p>
+        
+      <div class="user-button">
+        <a href="{% url 'login1' %}" class="justify-content-center submit">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+        </a>
+    </div>
+    </form>
+  </div>
+
+{% endblock %}
