@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.hashers import check_password
-from django.contrib.auth.models import User
+from .models import User
 
 # TODO: buscar en la base de datos todo
 class FR_backend(BaseBackend):
@@ -10,20 +10,20 @@ class FR_backend(BaseBackend):
 
     Use the login name and a hash of the password. For example:
 
-    ADMIN_LOGIN = 'admin'
-    ADMIN_PASSWORD = 'pbkdf2_sha256$30000$Vo0VlMnkR4Bk$qEvtdyZRWTcOsCnI/oQ7fVOu1XAURIZYoOZ3iq8Dr4M='
+    ADMIN_LOGIN = 'administrator'
+    ADMIN_PASSWORD = 'administrator'
     """
     def authenticate(self, request, username=None, password=None):
         login_valid = (settings.ADMIN_LOGIN == username)
-        pwd_valid = check_password(password, settings.ADMIN_PASSWORD)
-
+        pwd_valid = (password == settings.ADMIN_PASSWORD)#TODO: check_password(password, settings.ADMIN_PASSWORD)
+        
         if login_valid and pwd_valid:
             try:
-                user = User.objects.get(username=username)
+                user = User.objects.get(username=username) #TODO: esto no funciona porque necesitamos un Manager
             except User.DoesNotExist:
                 # Create a new user. There's no need to set a password
                 # because only the password from settings.py is checked.
-                user = User(username=username)
+                user = User(username=username) 
                 user.is_staff = True
                 user.is_superuser = True
                 user.save()

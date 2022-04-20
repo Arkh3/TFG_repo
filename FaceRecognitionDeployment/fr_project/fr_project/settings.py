@@ -133,10 +133,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ================== ATUCH AND ANDREWS ZONE ===========================
 
 
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'authentication.backends.FR_backend']# TODO: 
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'authentication.backends.FR_backend']# TODO: probar a quitar el primer backedn
 
 AUTH_USER_MODEL = "authentication.User"
 
 #TODO: borrar
-ADMIN_LOGIN = 'admin'
-ADMIN_PASSWORD = 'pbkdf2_sha256$30000$Vo0VlMnkR4Bk$qEvtdyZRWTcOsCnI/oQ7fVOu1XAURIZYoOZ3iq8Dr4M='
+ADMIN_LOGIN = 'administrator'
+ADMIN_PASSWORD = 'administrator'
