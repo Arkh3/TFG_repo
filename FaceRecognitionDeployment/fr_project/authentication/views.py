@@ -1,3 +1,4 @@
+from tkinter import E
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
@@ -20,20 +21,21 @@ def login2(request):
         return render(request, "login2.html", {"form": LoginForm()})
     
     form = LoginForm(request.POST)
+    
     if not form.is_valid():
         return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
 
     # Toma los datos limpios del formulario
-    username = form.cleaned_data['username']
+    email = form.cleaned_data['email']
     password = form.cleaned_data['password']
-
+    
     # Realiza la autenticación
-    user = authenticate(request, username=username, password=password)
+    user = authenticate(request, email=email, password=password)
     if user is not None:
         login(request, user)  # Registra el usuario en la sesión
-        return redirect('/inicio/')
+        return redirect('/welcome/')
     else:
-        return render(request, "error_login.html")
+        return render(request, "error.html")
 
 @require_http_methods(["GET", "POST"]) #Adaptarlo luego un poco a como lo tengo en GIW
 def register(request):
@@ -46,7 +48,7 @@ def welcome(request):
     else:
         return redirect('/inicio/')
 
-def logoutUser(request):
+def logoutUser(request): # TODO HACER BIEN PERROS
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/inicio/')
 

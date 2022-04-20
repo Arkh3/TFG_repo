@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 from django.conf import settings
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.hashers import check_password
@@ -13,17 +14,17 @@ class FR_backend(BaseBackend):
     ADMIN_LOGIN = 'administrator'
     ADMIN_PASSWORD = 'administrator'
     """
-    def authenticate(self, request, username=None, password=None):
-        login_valid = (settings.ADMIN_LOGIN == username)
+    def authenticate(self, request, email=None, password=None):
+        login_valid = (settings.ADMIN_LOGIN == email)
         pwd_valid = (password == settings.ADMIN_PASSWORD)#TODO: check_password(password, settings.ADMIN_PASSWORD)
-        
+                
         if login_valid and pwd_valid:
             try:
-                user = User.objects.get(username=username) #TODO: esto no funciona porque necesitamos un Manager
+                user = User.objects.get(email=email) #TODO: esto no funciona porque necesitamos un Manager
             except User.DoesNotExist:
                 # Create a new user. There's no need to set a password
                 # because only the password from settings.py is checked.
-                user = User(username=username) 
+                user = User(email=email) 
                 user.is_staff = True
                 user.is_superuser = True
                 user.save()

@@ -2,9 +2,13 @@
 {% load static %}
 {% block content %}
 
+
 <div class="login-box">
-    <h2>Login</h2>
-    <form method='POST'> 
+
+  <h2>Login</h2>
+  
+  <form action="{% url 'login1' %}" method='POST'> 
+      {% csrf_token %}
       
       <p class="change-form">
         ¿No tienes cuenta? <a  href="{% url 'register' %}"> Regístrate</a>
@@ -15,13 +19,13 @@
       <p>
         
       <div class="user-button">
-        <a href="{% url 'login1' %}" class="justify-content-center submit">
+        <button type="submit" class="justify-content-center submit">
             <span></span>
             <span></span>
             <span></span>
             <span></span>
             Submit
-        </a>
+        </button>
     </div>
     </form>
   </div>
