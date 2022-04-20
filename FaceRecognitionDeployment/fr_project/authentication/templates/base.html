@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>TFG AN AD</title> <!-- esto no se si hace algo realmente -->
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" >
+    </head>
+    <body class="align-items-center justify-content-center">
+        <h1 class="text-center">Hola mundo!</h1>  
+
+        <p>
+            {% if request.user.username %}
+            <p><div class="row border border-dark rounded-pill m-2">
+                <div class="col-8">
+                    <h4 class=" p-2 m-2">Bienvenido {{request.user.username}}</h4>
+                </div>
+                <div class="col-4">
+                    <a href="/logout/"><button type="button" class="btn btn-primary rounded-pill p-2 m-2">Cerrar sesión</button></a>                    
+                </div>
+                </div>
+                 
+            {% else %}
+                <p><div class="row border border-dark rounded-pill m-2">
+                    <div class="col-10">
+                        <h4 class=" p-2 m-2">No autenticado</h4>
+                    </div>
+                    <div class="col-2">
+                        <!-- el href se puede poner de otra forma más bonita / eficaz -->
+                        <a href="/login/"><button type="button" class="btn btn-primary rounded-pill p-2 m-2">Iniciar sesión</button></a>
+                    </div>
+                    </div>
+                </p>
+            {% endif %}
+        </p>
+        
+        {% block content %} 
+            
+        {% endblock %}
+        
+    </body>
+</html>
