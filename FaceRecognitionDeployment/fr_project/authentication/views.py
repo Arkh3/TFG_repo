@@ -43,12 +43,12 @@ def register(request):
         return render(request, "registro2.html", {"form": RegisterForm()})
     
 def welcome(request):
-    if True: #TODO: si el usuario tiene una sesión ( creo que viene en las request)
+    if request.user.is_authenticated:
         return render(request, "welcome.html")
     else:
-        return redirect('/inicio/')
+        return redirect('/')
 
-def logoutUser(request): # TODO HACER BIEN PERROS
+def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
-    return redirect('/inicio/')
+    return redirect('/')
 
