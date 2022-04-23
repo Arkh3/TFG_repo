@@ -31,12 +31,12 @@ def login2(request):
     # Realiza la autenticación
     user = authenticate(request, email=email, password=password)
     if user is not None:
-        login(request, user)  # Registra el usuario en la sesión
+        login(request, user) # Registra el usuario en la sesión
         return redirect('/welcome/')
     else:
         return render(request, "error.html")
 
-@require_http_methods(["GET", "POST"]) #Adaptarlo luego un poco a como lo tengo en GIW
+@require_http_methods(["GET", "POST"])
 def register(request):
 
     def checkPassword(pwd):
@@ -75,6 +75,8 @@ def register(request):
     if not aceptaTerminosYCondiciones:
         return HttpResponseBadRequest(f"Error en los datos: para crear un usuario debes aceptar los términos y condiciones")
 
+
+    #TODO: usar la funcion get_by_natural_key de user.object (el user manager)
     if User.objects.filter(email=email).exists():
         return HttpResponseBadRequest(f"Error en los datos: ese correo ya está en uso")
 
@@ -86,7 +88,9 @@ def register(request):
 
     # TODO maybe: mandarle un correo para confirmarle (y que tenga una campo en la bbdd que sea is_verified)
     
-    user = User.objects.create_user(email, email, pwd1)
+
+    #TODO: se supone que create_user ya guarda el usuario(probar a quitar la linea user.save())
+    user = User.objects.create_user(email, pwd1)
     user.save()
 
     user = authenticate(request, email=email, password=pwd1)
