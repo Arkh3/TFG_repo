@@ -40,7 +40,20 @@ def login2(request):
 def register(request):
 
     def checkPassword(pwd):
-        #TODO: comprobar la contraseña (que tenga mayúsculas, minúsculas, números, ...)
+        hasLetters = False
+        hasNumbers = False
+
+        for char in pwd:
+            if char.isalpha():
+                hasLetters = True
+            elif char.isnumeric():
+                hasNumbers = True
+            else:
+                return False
+
+        if len(pwd) < 8 or not hasLetters or not hasNumbers:
+            return False
+
         return True
 
     if request.method == "GET":
@@ -62,17 +75,16 @@ def register(request):
     if not aceptaTerminosYCondiciones:
         return HttpResponseBadRequest(f"Error en los datos: para crear un usuario debes aceptar los términos y condiciones")
 
-    if pwd1 != pwd2:
-        return HttpResponseBadRequest(f"Error en los datos: las contraseñas deben ser iguales")
-
     if User.objects.filter(email=email).exists():
         return HttpResponseBadRequest(f"Error en los datos: ese correo ya está en uso")
 
     if not checkPassword(pwd1):
-        return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios.")
+        return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números).")
+
+    if pwd1 != pwd2:
+        return HttpResponseBadRequest(f"Error en los datos: las contraseñas deben ser iguales")
 
     # TODO maybe: mandarle un correo para confirmarle (y que tenga una campo en la bbdd que sea is_verified)
-    # hacer un login y redirect a wellcome
     
     user = User.objects.create_user(email, email, pwd1)
     user.save()
