@@ -4,37 +4,37 @@
 
 <div class="login-box">
 
-    <h2>Register</h2>
-    
-    <form action="{% url 'register' %}" method='POST'> 
-      {% csrf_token %}
+  <h2>Register</h2>
 
-      {% for field in form %}
-        <div class="user-box">
-            <input name="" required="">
-            {{field.label_tag}}
-        </div>
-      {% endfor %}
+  <form action="{% url 'register' %}" method='POST'>
+    {% csrf_token %}
 
-      <label class="remeber-user">
-        <input type="checkbox" id="cbox1" value="first_checkbox">
-        Acepto todos los términos y condiciones
-      </label>
-
-      <p class="change-form">
-        ¿Ya tienes cuenta? <a  href="{% url 'login1' %}"> Inicia sesión</a>
-      <p> 
-      
-      <div class="user-button">
-        <button type="submit" class="justify-content-center submit">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Submit
-        </button>
+    {% for field in form %}
+    <div class="user-box">
+      {{field}}
+      {{field.label_tag}}
     </div>
-    </form>
-  </div>
+    {% endfor %}
+
+    <label class="remeber-user">
+      <input type="checkbox" id="cbox1" value="first_checkbox">
+      Acepto todos los términos y condiciones
+    </label>
+
+    <p class="change-form">
+      ¿Ya tienes cuenta? <a href="{% url 'login1' %}"> Inicia sesión</a>
+    <p>
+
+    <div class="user-button">
+      <button type="submit" class="justify-content-center submit">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
 
 {% endblock %}
