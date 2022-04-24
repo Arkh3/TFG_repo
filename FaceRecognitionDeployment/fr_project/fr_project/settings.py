@@ -134,3 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'authentication.backends.FR_backend']# TODO: probar a quitar el primer backedn
 
 AUTH_USER_MODEL = "authentication.User"
+
+# TODO: poner un path 
+MEDIA_ROOT = ""

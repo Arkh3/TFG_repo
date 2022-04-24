@@ -87,7 +87,6 @@ def register(request):
         return HttpResponseBadRequest(f"Error en los datos: las contraseñas deben ser iguales")
 
     # TODO maybe: mandarle un correo para confirmarle (y que tenga una campo en la bbdd que sea is_verified)
-    
 
     #TODO: se supone que create_user ya guarda el usuario(probar a quitar la linea user.save())
     user = User.objects.create_user(email, pwd1)

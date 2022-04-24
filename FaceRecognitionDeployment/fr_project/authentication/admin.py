@@ -4,9 +4,8 @@ from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 
-#TODO: PUEDe heredar de from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 class CustomUserAdmin(UserAdmin):
-    list_display = ("email",)
+    list_display = ("email","recognizer", "is_staff", "is_superuser")
     list_filter = ("is_staff", "is_superuser", "groups")
     search_fields = ("email",)
     ordering = ("email",)
@@ -14,7 +13,11 @@ class CustomUserAdmin(UserAdmin):
         "groups",
         "user_permissions",
     )
+    fieldsets = UserAdmin.fieldsets + (
+        ("Recognizer", {'fields': ('recognizer',)}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (None, {'fields': ('recognizer',)}),
+    )
 
-
-#TODO: a lo mejor tengo que hacer admin.site.unregister(User) y luego admin.site.register(User, UserAdmin)
 admin.site.register(User, CustomUserAdmin)
