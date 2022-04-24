@@ -36,8 +36,9 @@ def login2(request):
     else:
         return render(request, "error.html")
 
+
 @require_http_methods(["GET", "POST"])
-def register(request):
+def register1(request):
 
     def checkPassword(pwd):
         hasLetters = False
@@ -57,7 +58,7 @@ def register(request):
         return True
 
     if request.method == "GET":
-        return render(request, "registro2.html", {"form": RegisterForm()})
+        return render(request, "registro1.html", {"form": RegisterForm()})
 
     form = RegisterForm(request.POST)
 
@@ -101,6 +102,10 @@ def register(request):
     return redirect('/welcome/')
 
     
+def register2(request):
+    if request.method == "GET":
+        return render(request, "registro2.html", {})
+          
 def welcome(request):
     if request.user.is_authenticated:
         return render(request, "welcome.html")

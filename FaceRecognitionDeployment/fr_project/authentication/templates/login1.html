@@ -1,17 +1,38 @@
 {% extends "common.html" %}
 {% load static %}
 {% block content %}
-
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
 <div class="login-box">
 
   <h2>Login</h2>
   
-  <form action="{% url 'login1' %}" method='POST'> 
+  <form  method='POST'>  <!-- action="{% url 'login1' %}"  -->
       {% csrf_token %}
       
+      <a href="#">
+        <div class="camera-area" id="radiotfoto">
+            <div id="withCameraPic">
+              <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic" >
+              <p class="pr-4 camera-div-text">Click aquí para empezar <p>
+            </div>
+            
+            <!-- VER DND PONER LO DE TURN_OFF CAMARA EN EL JS -->
+            
+            <div id="withOutCameraPic" class="none"> 
+                <div class="container_radio">
+                    <video id="video" autoplay="autoplay" class="video_container none"></video>
+                </div>
+              <canvas id="canvas" class="none"></canvas>
+              <a class="btn btn-primary btn-sm mb-3"  type="submit" id="btn_start">Empezar</a>
+              <a class="btn btn-success btn-sm mb-3 none" type="submit" id="btn_save">Guardar</a> <!-- Crear algo talque así --> 
+              <a class="btn btn-warning btn-sm mb-3 none" type="submit" id="btn_repeat">Repetir</a> <!-- Crear algo talque así -->
+            </div>
+        </div>        
+      </a>
+
       <p class="change-form">
-        ¿No tienes cuenta? <a  href="{% url 'register' %}"> Regístrate</a>
+        ¿No tienes cuenta? <a  href="{% url 'register1' %}"> Regístrate</a>
       <p> 
       
       <p class="change-form">
@@ -28,6 +49,8 @@
         </button>
     </div>
     </form>
-  </div>
+</div>
+
+<script src="{% static 'js/camera.js' %}"></script>
 
 {% endblock %}

@@ -55,7 +55,7 @@ html {
     background: linear-gradient(#141e30, #243b55);
     /*background-image: url("../imgs/bckground.jpg");*/
   }
-  
+
   .login-box {
     position: absolute;
     top: 50%;
@@ -74,8 +74,35 @@ html {
     padding: 0;
     color: #fff;
     text-align: center;
-  }
+  }  
   
+  .login-box a {
+    text-decoration: none;
+  }
+
+  .camera-area{
+    border:1px solid;
+    border-color: rgb(255, 255, 255);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .login-box .camera-area .camera-img{
+    filter: invert(0.5);
+    max-width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .camera-div-text{
+    color: rgb(255, 255, 255);
+  }
+
+  .camera-area:hover{
+    border-color: rgb(143, 236, 163);
+  }
+
   .login-box .user-box {
     position: relative;
   }
@@ -117,6 +144,20 @@ html {
   }
   
   .login-box form .submit {
+    /* Para eliminar el formato por defecto del boton*/
+    background: none;
+    border: 0;
+    color: inherit;
+    /* cursor: default; */
+    font: inherit;
+    line-height: normal;
+    overflow: visible;
+    padding: 0;
+    -webkit-user-select: none; /* for button */
+    -webkit-appearance: button; /* for input */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    /* Para añadir el nuevo formato*/
     position: relative;
     display: inline-block;
     padding: 10px 20px;
@@ -255,4 +296,12 @@ html {
     background: transparent;
   }
 
+  /* Video*/
+  .video_container{
+    width: 100%;
+    padding: 15px;
+  }
   
+  .none {
+    display: none;
+  }
