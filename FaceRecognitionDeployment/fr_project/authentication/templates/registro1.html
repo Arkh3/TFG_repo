@@ -6,15 +6,15 @@
 
     <h2>Register</h2>
     
-    <form action="{% url 'welcome' %}" method='POST'> 
+    <form action="{% url 'register2' %}" method='POST'> 
       {% csrf_token %}
-      
-      <a href="#">
-        <div class="camera-area border ">
-          <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic" >
-          <p class="pr-4 camera-div-text mx-auto">Click aquí para empezar <p>
+
+      {% for field in form %}
+        <div class="user-box">
+            <input name="" required="">
+            {{field.label_tag}}
         </div>
-      </a>
+      {% endfor %}
 
       <label class="remeber-user">
         <input type="checkbox" id="cbox1" value="first_checkbox">
@@ -36,7 +36,5 @@
     </div>
     </form>
   </div>
-
-  <script src="{% static 'js/camera.js' %}"></script>
 
 {% endblock %}

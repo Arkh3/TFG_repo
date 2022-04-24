@@ -1,4 +1,3 @@
-from tkinter import E
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
@@ -38,9 +37,13 @@ def login2(request):
         return render(request, "error.html")
 
 @require_http_methods(["GET", "POST"]) #Adaptarlo luego un poco a como lo tengo en GIW
-def register(request):
+def register1(request):
     if request.method == "GET":
-        return render(request, "registro2.html", {"form": RegisterForm()})
+        return render(request, "registro1.html", {"form": RegisterForm()})
+    
+def register2(request):
+    if request.method == "GET":
+        return render(request, "registro2.html", {})
     
 def welcome(request):
     if request.user.is_authenticated:
