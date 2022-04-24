@@ -13,7 +13,20 @@ from .forms import LoginForm, RegisterForm
 def login1(request):
     if request.method == "GET":
         return render(request, "login1.html", {"form": LoginForm()})
+
+    #TODO: hacer que:
+    # Checkee que existe el reconocedor
+
+    # Si existe el reconcedor que le de la opción de darle a click
+
+    # Si no existe el reconocedor que se ponga en rojo y le de una explicación de que tiene que activar el reconocimiento facial en los ajustes una vez iniciado sesión
+
+    # Esto debería ser authentification(email, imagenes): Si le da a click que coga unas imágenes de algún directorio y que las valide contra el reconocedor existente
+
+    # Si el reconocedor dice que es válida la cara, redireccionarle a login
     
+    
+
 @require_http_methods(["GET", "POST"])
 def login2(request):
     if request.method == "GET":
@@ -99,18 +112,25 @@ def register1(request):
         return HttpResponseBadRequest(f"Error NO SE HA GUARDADO BIEN EL USUARIO")
 
     login(request, user)
-    return redirect('/welcome/')
+    return redirect('/register2/')
 
-    
+
+@require_http_methods(["GET", "POST"])
 def register2(request):
     if request.method == "GET":
         return render(request, "registro2.html", {})
-          
+        
+    #TODO: hacer que cree el reconocedor para la persona.
+
+    # Estamos teniendo problemas para detectar la cara
+
+
 def welcome(request):
     if request.user.is_authenticated:
         return render(request, "welcome.html")
     else:
         return redirect('/')
+
 
 def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
