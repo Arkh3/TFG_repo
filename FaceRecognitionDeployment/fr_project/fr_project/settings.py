@@ -135,6 +135,5 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'authent
 
 AUTH_USER_MODEL = "authentication.User"
 
-#TODO: borrar
-ADMIN_LOGIN = 'admin@ucm.es'
-ADMIN_PASSWORD = 'admin'
+# TODO: poner un path 
+MEDIA_ROOT = ""
