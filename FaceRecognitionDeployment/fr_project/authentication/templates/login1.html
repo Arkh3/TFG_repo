@@ -6,9 +6,15 @@
 <div class="login-box">
 
   <h2>Login</h2>
+
+  <h2>{{email}}</h2>
   
   <form  method='POST'>  <!-- action="{% url 'login1' %}"  -->
       {% csrf_token %}
+
+      <div class="user-box">
+        <input type="hidden" name="email" id="id_email" value={{email}}>
+      </div>
       
       <a href="#">
         <div class="camera-area" id="radiotfoto">
@@ -32,7 +38,7 @@
       </a>
 
       <p class="change-form">
-        ¿No tienes cuenta? <a  href="{% url 'register1' %}"> Regístrate</a>
+        ¿Correo equivocado? <a  href="{% url 'login0' %}"> Usar otra cuenta</a>
       <p> 
       
       <p class="change-form">

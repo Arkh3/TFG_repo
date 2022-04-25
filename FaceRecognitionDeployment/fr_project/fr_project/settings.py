@@ -135,5 +135,4 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'authent
 
 AUTH_USER_MODEL = "authentication.User"
 
-# TODO: poner un path 
-MEDIA_ROOT = ""
+RECOGNIZERS_PATH = "/code/authentication/recognizers"

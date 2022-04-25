@@ -1,0 +1,35 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+
+<div class="login-box">
+
+  <h2>Login</h2>
+
+  <form action="{% url 'login0' %}" method='POST'>
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="user-box">
+      {{field}}
+      {{field.label_tag}}
+    </div>
+    {% endfor %}
+
+    <p class="change-form">
+      ¿No tienes cuenta? <a href="{% url 'register1' %}"> Regístrate</a>
+    <p>
+
+    <div class="user-button">
+      <button type="submit" class="justify-content-center submit">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

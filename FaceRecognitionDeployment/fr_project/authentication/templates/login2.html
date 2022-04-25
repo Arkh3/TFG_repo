@@ -5,19 +5,23 @@
 <div class="login-box">
 
   <h2>Login</h2>
+
+  <h2>{{email}}</h2>
   
   <form action="{% url 'login2' %}" method='POST'> 
       {% csrf_token %}
          
-      {% for field in form %}
         <div class="user-box">
-            {{field}}
-            {{field.label_tag}}
+          <input type="hidden" name="email" id="id_email" value={{email}}>
         </div>
-      {% endfor %}
+        
+        <div class="user-box">
+          <input type="password" name="password" required="" id="id_password">
+          <label for="id_password">Password:</label>
+        </div>
       
       <p class="change-form">
-        ¿No tienes cuenta? <a  href="{% url 'register1' %}"> Regístrate</a>
+        ¿Correo equivocado? <a  href="{% url 'login0' %}"> Usar otra cuenta</a>
       <p> 
       
       <p class="change-form">
