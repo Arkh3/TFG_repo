@@ -8,53 +8,57 @@
   <h2>Login</h2>
 
   <h2>{{email}}</h2>
-  
-  <form  method='POST'>  <!-- action="{% url 'login1' %}"  -->
-      {% csrf_token %}
 
-      <div class="user-box">
-        <input type="hidden" name="email" id="id_email" value={{email}}>
-      </div>
-      
-      <a href="#">
-        <div class="camera-area" id="radiotfoto">
-            <div id="withCameraPic">
-              <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic" >
-              <p class="pr-4 camera-div-text">Click aquí para empezar <p>
-            </div>
-            
-            <!-- VER DND PONER LO DE TURN_OFF CAMARA EN EL JS -->
-            
-            <div id="withOutCameraPic" class="none"> 
-                <div class="container_radio">
-                    <video id="video" autoplay="autoplay" class="video_container none"></video>
-                </div>
-              <canvas id="canvas" class="none"></canvas>
-              <a class="btn btn-primary btn-sm mb-3"  type="submit" id="btn_start">Empezar</a>
-              <a class="btn btn-success btn-sm mb-3 none" type="submit" id="btn_save">Guardar</a> <!-- Crear algo talque así --> 
-              <a class="btn btn-warning btn-sm mb-3 none" type="submit" id="btn_repeat">Repetir</a> <!-- Crear algo talque así -->
-            </div>
-        </div>        
-      </a>
+  <form method='POST'>
+    <!-- action="{% url 'login1' %}"  -->
+    {% csrf_token %}
 
-      <p class="change-form">
-        ¿Correo equivocado? <a  href="{% url 'login0' %}"> Usar otra cuenta</a>
-      <p> 
-      
-      <p class="change-form">
-        ¿Quiere iniciar sesión usando<a  href="{% url 'login2' %}"> contraseña</a> ?
-      <p>
-        
-      <div class="user-button">
-        <button type="submit" class="justify-content-center submit">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Submit
-        </button>
+    <div class="user-box">
+      <input type="hidden" name="email" id="id_email" value={{email}}>
     </div>
-    </form>
+
+    <a href="#">
+      <div class="camera-area" id="radiotfoto">
+        <div id="withCameraPic">
+          <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
+          <p class="pr-4 camera-div-text">Click aquí para empezar
+          <p>
+        </div>
+
+        <!-- VER DND PONER LO DE TURN_OFF CAMARA EN EL JS -->
+
+        <div id="withOutCameraPic" class="none">
+          <div class="container_radio">
+            <video id="video" autoplay="autoplay" class="video_container none"></video>
+          </div>
+          <canvas id="canvas" class="none"></canvas>
+          <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
+          <a class="btn btn-success btn-sm mb-3 none" type="submit" id="btn_save">Guardar</a>
+          <!-- Crear algo talque así -->
+          <a class="btn btn-warning btn-sm mb-3 none" type="submit" id="btn_repeat">Repetir</a>
+          <!-- Crear algo talque así -->
+        </div>
+      </div>
+    </a>
+
+    <p class="change-form">
+      ¿Correo equivocado? <a href="{% url 'login0' %}"> Usar otra cuenta</a>
+    <p>
+
+    <p class="change-form">
+      ¿Quiere iniciar sesión usando<a href="{% url 'login2' %}"> contraseña</a> ?
+    <p>
+    
+    <div class="user-button">
+      <button type="submit" class="justify-content-center submit">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Submit
+      </button>
+    </div>
+  </form>
 </div>
 
 <script src="{% static 'js/camera.js' %}"></script>

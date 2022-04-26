@@ -11,14 +11,12 @@
   <form action="{% url 'login2' %}" method='POST'> 
       {% csrf_token %}
          
-        <div class="user-box">
-          <input type="hidden" name="email" id="id_email" value={{email}}>
-        </div>
-        
-        <div class="user-box">
-          <input type="password" name="password" required="" id="id_password">
-          <label for="id_password">Password:</label>
-        </div>
+      {% for field in form %}
+      <div class="user-box">
+        {{field}}
+        {{field.label_tag}}
+      </div>
+      {% endfor %}
       
       <p class="change-form">
         ¿Correo equivocado? <a  href="{% url 'login0' %}"> Usar otra cuenta</a>

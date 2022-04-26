@@ -1,9 +1,8 @@
 from django import forms
 
 # WARNING: si cambiamos los nombres o añadimos campos, hay que plasmarlo en login2.html
-class LoginForm(forms.Form):
+class LoginPwdForm(forms.Form):
     """Formulario para recolectar la contraseña usuarios"""
-    email = forms.EmailField(label='Email', max_length=100)
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
 class LoginEmailForm(forms.Form):

@@ -5,6 +5,8 @@
 <div class="login-box">
 
     <h2>Register</h2>
+
+    <h2>{{email}}</h2>
     
     <form action="{% url 'register2' %}" method='POST'> 
       {% csrf_token %}
@@ -15,11 +17,6 @@
           <p class="pr-4 camera-div-text mx-auto">Click aquí para empezar <p>
         </div>
       </a>
-
-      <label class="remeber-user">
-        <input type="checkbox" id="cbox1" value="first_checkbox">
-        Acepto todos los términos y condiciones
-      </label>
       
       <div class="user-button">
         <button type="submit" class="justify-content-center submit">

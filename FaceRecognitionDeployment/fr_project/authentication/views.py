@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 import os
 # Create your views here.
-from .forms import RegisterForm, LoginEmailForm, LoginForm
+from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -48,11 +48,9 @@ def login1(request):
 
             user = User.objects.get(email=email)
 
-            if user.recognizer is not None:
-                return render(request, "login1.html", {'email': request.session['email']})
-            else:
-                #TODO: Si no existe el reconocedor que se ponga en rojo y le de una explicación de que tiene que activar el reconocimiento facial en los ajustes una vez iniciado sesión
-                return render(request, "login1.html", {'email': request.session['email']})
+            hasRecon = user.recognizer is not None
+            #TODO: Si no existe el reconocedor que se ponga en rojo y le de una explicación de que tiene que activar el reconocimiento facial en los ajustes una vez iniciado sesión
+            return render(request, "login1.html", {'email': request.session['email'], 'hasRecon': hasRecon})
         else:
             return redirect("/")
 
@@ -73,26 +71,26 @@ def login1(request):
 def login2(request):
     if request.method == "GET":
         if 'email' in request.session:
-            return render(request, "login2.html", {'email': request.session['email']})
+            return render(request, "login2.html", {'email': request.session['email'], 'form':LoginPwdForm()})
         else:
             return redirect("/")
     
-    form = LoginForm(request.POST)
+    form = LoginPwdForm(request.POST)
     
     if not form.is_valid():
         return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
 
     ## Toma los datos limpios del formulario
-    email = form.cleaned_data['email']
     password = form.cleaned_data['password']
 #
     # Realiza la autenticación
-    user = authenticate(request, email=email, password=password)
+    user = authenticate(request, email=request.session['email'], password=password)
+
     if user is not None:
         login(request, user) # Registra el usuario en la sesión
         return redirect('/welcome/')
     else:
-        return render(request, "error.html")
+        return HttpResponseBadRequest(f"Error: contraseña incorrecta")
 
 
 @require_http_methods(["GET", "POST"])
@@ -116,6 +114,11 @@ def register1(request):
         return True
 
     if request.method == "GET":
+
+        if 'email' in request.session:
+            request.session.pop("email")
+
+        
         return render(request, "registro1.html", {"form": RegisterForm()})
 
     form = RegisterForm(request.POST)
@@ -136,9 +139,10 @@ def register1(request):
 
     if User.objects.filter(email=email).exists():
         return HttpResponseBadRequest(f"Error en los datos: ese correo ya está en uso")
-
-    if not checkPassword(pwd1):
-        return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números).")
+    
+    #TODO: descomentar esto al acabar el proyecto
+    #if not checkPassword(pwd1):
+    #    return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números).")
 
     if pwd1 != pwd2:
         return HttpResponseBadRequest(f"Error en los datos: las contraseñas deben ser iguales")
@@ -157,12 +161,15 @@ def register1(request):
     request.session['email'] = email
     return redirect('/register2/')
 
-# TODO: que register1 le pase a register2 el email (si no esta el email, register2 debería redireccionar a register1)
-# TODO: register dos debería tener dos botones: omitir el paso y finalizar
+
+# TODO: register un boton que evoluciona: omitir el paso > bloqueo > finalizar
 @require_http_methods(["GET", "POST"])
 def register2(request):
     if request.method == "GET":
-        return render(request, "registro2.html", {})
+        if 'email' in request.session:
+            return render(request, "registro2.html", {'email':request.session['email']})
+        else:
+            return redirect('register1')
         
     email = request.session['email']
 
