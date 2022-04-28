@@ -3,8 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from .userManager import UserManager
 from django.core.mail import send_mail
+from django.conf import settings
+import os
 # Create your models here.
-
 
 # Create your models here.
 class User(AbstractBaseUser, PermissionsMixin):
@@ -55,3 +56,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
+        
+    def get_tmp_imgs_path(self):
+        ret = os.path.join(settings.MEDIA_ROOT,str(self.id))
+        
+        if not os.path.isdir(ret):
+            os.mkdir(ret)
+            
+        return ret

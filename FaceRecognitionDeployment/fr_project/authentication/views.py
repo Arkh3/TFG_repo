@@ -4,7 +4,7 @@ from.models import User
 from django.http import HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
-import os
+import os, base64
 # Create your views here.
 from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
 
@@ -93,6 +93,7 @@ def login2(request):
         return HttpResponseBadRequest(f"Error: contraseña incorrecta")
 
 
+# TODO: añadir los terminos y condiciones (enlace)
 @require_http_methods(["GET", "POST"])
 def register1(request):
 
@@ -170,7 +171,7 @@ def register2(request):
             return render(request, "registro2.html", {'email':request.session['email']})
         else:
             return redirect('register1')
-        
+      
     email = request.session['email']
 
     user = User.objects.get(email=email)
@@ -198,3 +199,17 @@ def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/')
 
+def upload(request):
+    if request.method == "POST":
+        user = User.objects.get(email=request.session['email'])
+        base64_img = request.POST['foto']
+        data_img = base64.decodebytes(base64_img.encode('ascii'))
+        
+        tmp_path =  user.get_tmp_imgs_path()
+        id = len(os.listdir(tmp_path)) + 1
+        
+        f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
+        f.write(data_img)
+        f.close()
+        
+        return redirect('/') # TODO
