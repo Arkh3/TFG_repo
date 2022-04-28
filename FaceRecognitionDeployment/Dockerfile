@@ -2,13 +2,7 @@ FROM python:3
 
 ## Installing Python dependencies
 RUN apt upgrade
-RUN apt update
-RUN apt install -y git
-RUN apt install -y vim
-#RUN apt install -y postgresql
-#RUN apt install -y python3.8
-#RUN apt install -y python3-pip
-RUN apt install -y libpq-dev
+RUN apt update && apt install -y vim libpq-dev cmake ffmpeg libsm6 libxext6
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 COPY requirements.txt /
