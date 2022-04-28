@@ -87,7 +87,15 @@ html {
     text-align: center;
   }
 
-  .login-box .camera-area .camera-img{
+  .camera-area2{
+    border:1px solid;
+    border-color: rgb(255, 255, 255);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .login-box .camera-area .camera-img,
+  .login-box .camera-area2 .camera-img{
     filter: invert(0.5);
     max-width: 200px;
     display: block;
@@ -305,3 +313,7 @@ html {
   .none {
     display: none;
   }
+
+  .noHover{
+    pointer-events: none;
+}

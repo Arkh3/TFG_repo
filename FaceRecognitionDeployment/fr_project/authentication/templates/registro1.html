@@ -17,8 +17,8 @@
     {% endfor %}
 
     <label class="remeber-user">
-      <input type="checkbox" id="cbox1" value="first_checkbox">
-      Acepto todos los términos y condiciones
+      <input type="checkbox" id="field_terms" value="first_checkbox" required>
+      Acepto todos los <u>Términos y Condiciones</u>
     </label>
 
     <p class="change-form">
@@ -36,5 +36,10 @@
     </div>
   </form>
 </div>
+
+<script>
+  if(!form.terms.checked)
+    document.getElementById("field_terms").setCustomValidity("Necesaria esta acción para continuar.");
+</script>
 
 {% endblock %}
