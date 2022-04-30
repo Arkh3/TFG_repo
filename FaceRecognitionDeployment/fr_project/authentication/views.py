@@ -5,8 +5,11 @@ from django.http import HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 import os, base64
+
 # Create your views here.
 from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
+from .faceRecognition import createRecognizer
+
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -54,18 +57,18 @@ def login1(request):
         else:
             return redirect("/")
 
+    # TODO: las imágenes deberían ser las de la webcam
+    imagesPath = "/code/authentication/testImagesLogin2"
+
     #TODO: hacer que:
-  
-    # Esto debería ser authentification(email, imagenes): Si le da a click que coga unas imágenes de algún directorio y que las valide contra el reconocedor existente
-    # Realiza la autenticación
-    #user = authenticate(request, email=email, imagenes=imagenes)
-    #if user is not None:
-    #    login(request, user) # Registra el usuario en la sesión
-    #    return redirect('/welcome/')
-    #else:
-    #    return render(request, "error.html")
-    #
-    
+    user = authenticate(request, email=request.session['email'], images=imagesPath)
+
+    if user is not None:
+        login(request, user) # Registra el usuario en la sesión
+        return redirect('/welcome/')
+    else:
+        return HttpResponseBadRequest(f"Error: reconocimiento facial fallido incorrecta")
+
 
 @require_http_methods(["GET", "POST"])
 def login2(request):
@@ -118,7 +121,6 @@ def register1(request):
 
         if 'email' in request.session:
             request.session.pop("email")
-
         
         return render(request, "registro1.html", {"form": RegisterForm()})
 
@@ -157,8 +159,6 @@ def register1(request):
     if user is None:
         return HttpResponseBadRequest(f"Error NO SE HA GUARDADO BIEN EL USUARIO")
     
-    #TODO: mover el login a register2 al final
-    login(request, user)
     request.session['email'] = email
     return redirect('/register2/')
 
@@ -178,13 +178,19 @@ def register2(request):
 
     recognizerPath = os.path.join(settings.RECOGNIZERS_PATH, str(user.id))
 
-    user.recognizer = recognizerPath
-    user.save()
+    # TODO: Que el reconocedor se entrene con las imágenes de la webcam
+    imagesPath = "/code/authentication/testImagesRegister"
 
-    return redirect("/welcome/")
-    # TODO: Crear el reconocedor en elpath recognizerPath
+    # TODO: a lo mejor hay que asegurarse que se crea el recognizer antes de hacer el save()
+    if createRecognizer(imagesPath, recognizerPath):
+        user.recognizer = recognizerPath
+        user.save()
+    
+    login(request, user, backend='authentication.backends.FR_backend')
+    return redirect("welcome")
 
 
+@require_http_methods(["GET"])
 def welcome(request):
     if 'email' in request.session:
         request.session.pop("email")

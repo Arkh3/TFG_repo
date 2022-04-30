@@ -9,7 +9,6 @@ trainingTimes, recognitionTimes, fp, fn, tp, tn = dict(), dict(), dict(), dict()
 modelosConf = {'EigenFaces50': 8000, 'EigenFaces150': 8000, 'FisherFaces50':90, 'FisherFaces150':90, 'LBPH50':40, 'LBPH150':40}
 
 def prepareFolders(user):
-
     path = "users/"
     if not os.path.isdir(path):
         os.mkdir(path)
@@ -277,9 +276,9 @@ def testModelDlib(user, lenForTraining):
  
         numFalses, numTrues = 0, 0
         for result in results:
-            if result:                
+            if result:
                 numTrues += 1
-            else:                
+            else:
                 numFalses += 1
                 print("False negative while TestT: " + testingImagesPath + image)
         
