@@ -181,7 +181,7 @@ def register2(request):
     user.recognizer = recognizerPath
     user.save()
 
-    return render(request, "welcome.html")
+    return redirect("/welcome/")
     # TODO: Crear el reconocedor en elpath recognizerPath
 
 
@@ -199,17 +199,42 @@ def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/')
 
-def upload(request):
+
+def upload_register(request):
     if request.method == "POST":
+              
         user = User.objects.get(email=request.session['email'])
-        base64_img = request.POST['foto']
-        data_img = base64.decodebytes(base64_img.encode('ascii'))
+
+        # TODO: ese 10 tambien hay que cambiarlo en el javascript ( linea 77)
+        for i in range(10):
+            base64_img = request.POST['fotos['+str(i)+'][]']
+
+            data_img = base64.decodebytes(base64_img.encode('ascii'))
+            
+            tmp_path =  user.get_tmp_imgs_path()
+
+            id = len(os.listdir(tmp_path)) + 1
+            
+            f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
+            f.write(data_img)
+            f.close()
+
+        #TODO: createRecognizer(request.session['email']) # que cojalas imagenes de user.get_tmp_imgs_path(), las vaya codificando y borrando y cuando haya codificado y borrado todas que cree el reconocedor
         
-        tmp_path =  user.get_tmp_imgs_path()
-        id = len(os.listdir(tmp_path)) + 1
-        
-        f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
-        f.write(data_img)
-        f.close()
-        
-        return redirect('/') # TODO
+        #TODO: register2 debería comprobar si existe ya un reconocedor para la persona ( en caso de que exista debería poner, reconocedor creado con éxito! y poner finalizar)
+        return redirect('/register2/')
+
+
+#MANDÁNDOLE 50 IMÁGENES Y QUE EL UPLOAD_REGISTER PARSEE 30 IMÁGENES Y DE ERROR SI EN LAS 50 IMAGENES NO HA CONSEGUIDO ENCONTRAR 30 BUENAS
+
+#CHECKEA CUANTAS IMAGENES HAY (DEBERIA HABER 0 AL PRINCIPIO Y 30 AL FINAL)
+
+#COGE LA IMAGEN Y LA PARSEA, VE SI HAY UNA CARA Y HACE EL ENCODING Y LA GUARDA EN ALGUN FICHERO CON LO DE PICKLE
+
+#BORRA LA IMAGEN (O NO SE GUARDA DIRECTAMENTE)
+
+#UNA VEZ ACABE EL REGISTRO DEBERÍA LIMPIARSE LA CARPETA DE TMP
+
+
+##############
+#OTRA FORMA DE HACERLO SERÍA 

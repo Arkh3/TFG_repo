@@ -40,14 +40,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # ------------------------------------------------------
 
-
     #TODO: crear un reconocedor con 30 imagenes
 
     #TODO: reemplazar el reconocedor: borrar el actual y crear otro nuevo con el reconocedor de 30 imágenes
 
     #TODO: pasarle 5 imágenes y que valide las 5 y diga si es el o no
-
-    
 
     def clean(self):
         super().clean()
@@ -58,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
         
     def get_tmp_imgs_path(self):
-        ret = os.path.join(settings.MEDIA_ROOT,str(self.id))
+        ret = os.path.join(settings.TMP_IMAGES_PATH,str(self.id))
         
         if not os.path.isdir(ret):
             os.mkdir(ret)

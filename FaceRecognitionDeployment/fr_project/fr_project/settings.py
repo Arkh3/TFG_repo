@@ -141,3 +141,6 @@ RECOGNIZERS_PATH = "/code/authentication/recognizers"
 
 MEDIA_URL = 'media/'                             # Lo que mostrará en la url
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    # Donde va a buscar los archivos realmente
+
+TMP_IMAGES_PATH = os.path.join(BASE_DIR, 'authentication', 'media')
+

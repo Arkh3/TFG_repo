@@ -69,34 +69,47 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
 
-function takepicture() {
+async function takepictures() {
+
+    const fotos = []
     canvas = document.getElementById("canvas");
-    cxt = canvas.getContext("2d"); 
-    video = document.getElementById("video");
-    photo = document.getElementById('photo');
+    cxt = canvas.getContext("2d");
 
     width = 250;
-    height = 250;
+    height = 250; // TODO: hacer que el aspect-ratio siga siendo igual(no deformar)
+
+    video = document.getElementById("video");
 
     canvas.width = width; 
     canvas.height = height;
-    cxt.drawImage(video, 0, 0, width, height);
-    var data = canvas.toDataURL('image/png');    
-    photo.setAttribute('src', data);
-    //e.preventDefault();
+
+    for(var i=0; i < 10; i++){
+    
+        cxt.drawImage(video, 0, 0, width, height);
+        var data = canvas.toDataURL('image/png');    
+        var info = data.split(",", 2);
+
+        fotos[i] = info
+        await delay(500)
+    }
+
     var csrftoken = getCookie('csrftoken');
-    var info = data.split(",", 2);
 
     $.ajax({
         type : "POST",
-        url : "/upload/", 
-        data : {foto :info[1], csrfmiddlewaretoken: csrftoken},
+        url : "/upload_register/", 
+        data : {fotos :fotos, csrfmiddlewaretoken: csrftoken},
         dataType : 'json',
         success: function(){
             alert("Imagen guardada en servidor");                       
         }
     });
+    document.getElementById("end").removeAttribute('disabled');
+    $("#end").removeClass("noHover");
 }
 
 $("#radiotfoto").click(function(){
@@ -113,11 +126,12 @@ $("#btn_start").click(function(){
     $("#end").addClass("submit noHover");
     $("#ommit").addClass("none");
     $("#ommit").removeClass("submit");
-    setTimeout(function() { //QUITO EL TEMPORIZADOR ???????????????????????
-        takepicture();
+    takepictures();
+}); 
+
+/*    setTimeout(function() { //QUITO EL TEMPORIZADOR ???????????????????????
+        takepictures();
         alert("Foto tomada en teoría xd");
         document.getElementById("end").removeAttribute('disabled');
         $("#end").removeClass("noHover");
-    },1000); 
-}); 
-
+    },5000);  */
