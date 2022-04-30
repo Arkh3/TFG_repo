@@ -6,8 +6,7 @@ function turnOnCamera() {
     video = document.getElementById("video");
 
     if(!navigator.getUserMedia)
-        navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || 
-    navigator.msGetUserMedia;
+        navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     if(!window.URL)
         window.URL = window.webkitURL;
 
@@ -30,10 +29,87 @@ function turnOnCamera() {
     }
 }
 
-function turnOffCamera() {
+function turnOffCamera() {  // No lo estoy usando por ahora
     video.pause();
     video.srcObject = null;
     localstream.getTracks()[0].stop();
+    //video.load();
+}
+
+
+function dataURItoBlob( dataURI ) {
+
+	var byteString = atob( dataURI.split( ',' )[ 1 ] );
+	var mimeString = dataURI.split( ',' )[ 0 ].split( ':' )[ 1 ].split( ';' )[ 0 ];
+	
+	var buffer	= new ArrayBuffer( byteString.length );
+	var data	= new DataView( buffer );
+	
+	for( var i = 0; i < byteString.length; i++ ) {
+	
+		data.setUint8( i, byteString.charCodeAt( i ) );
+	}
+	
+	return new Blob( [ buffer ], { type: mimeString } );
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+
+async function takepictures() {
+
+    const fotos = []
+    canvas = document.getElementById("canvas");
+    cxt = canvas.getContext("2d");
+
+    width = 250;
+    height = 250; // TODO: hacer que el aspect-ratio siga siendo igual(no deformar)
+
+    video = document.getElementById("video");
+
+    canvas.width = width; 
+    canvas.height = height;
+
+    for(var i=0; i < 10; i++){
+    
+        cxt.drawImage(video, 0, 0, width, height);
+        var data = canvas.toDataURL('image/png');    
+        var info = data.split(",", 2);
+
+        fotos[i] = info
+        await delay(500)
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    $.ajax({
+        type : "POST",
+        url : "/upload_register/", 
+        data : {fotos :fotos, csrfmiddlewaretoken: csrftoken},
+        dataType : 'json',
+        success: function(){
+            alert("Imagen guardada en servidor");                       
+        }
+    });
+    document.getElementById("end").removeAttribute('disabled');
+    $("#end").removeClass("noHover");
 }
 
 $("#radiotfoto").click(function(){
@@ -43,17 +119,19 @@ $("#radiotfoto").click(function(){
     turnOnCamera();
 }); 
 
-$("#btn_start").click(function(){  
-    setTimeout(function() { //QUITO EL TEMPORIZADOR ???????????????????????
-        $("#btn_start").addClass("none");
-        $("#btn_save").removeClass("none"); 
-        $("#btn_repeat").removeClass("none");
-    },1000); 
+$("#btn_start").click(function(){      
+    $("#btn_start").addClass("none");
+    // Main Buttons
+    $("#end").removeClass("none");
+    $("#end").addClass("submit noHover");
+    $("#ommit").addClass("none");
+    $("#ommit").removeClass("submit");
+    takepictures();
 }); 
 
-$("#btn_save").click(function(){ // NO FUNCIONA BIEN, llega pero no aplica
-    turnOffCamera(); 
-    $("#video").addClass("none");
-    $("#withOutCameraPic").addClass("none");
-    $("#withCameraPic").removeClass("none");
-}); 
+/*    setTimeout(function() { //QUITO EL TEMPORIZADOR ???????????????????????
+        takepictures();
+        alert("Foto tomada en teoría xd");
+        document.getElementById("end").removeAttribute('disabled');
+        $("#end").removeClass("noHover");
+    },5000);  */

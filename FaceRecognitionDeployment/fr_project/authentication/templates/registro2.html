@@ -1,31 +1,52 @@
 {% extends "common.html" %}
 {% load static %}
 {% block content %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
-<div class="login-box">
+<div class="login-box mx-auto">
 
     <h2>Register</h2>
 
     <h2>{{email}}</h2>
     
-    <form action="{% url 'register2' %}" method='POST'> 
+    <form action="{% url 'register2' %}" method='POST' enctype="multipart/form-data"> 
       {% csrf_token %}
       
       <a href="#">
-        <div class="camera-area border ">
-          <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic" >
-          <p class="pr-4 camera-div-text mx-auto">Click aquí para empezar <p>
+        <div class="camera-area" id="radiotfoto">
+          <div id="withCameraPic">
+            <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
+            <p class="pr-4 camera-div-text">Click aquí para empezar
+            <p>
+          </div>
+  
+          <!-- VER DND PONER LO DE TURN_OFF CAMARA EN EL JS -->
+  
+          <div id="withOutCameraPic" class="none">
+            <div class="container_radio">
+              <video id="video" autoplay="autoplay" class="video_container none"></video>
+            </div>
+            <canvas id="canvas" class="none"></canvas>
+            <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
+          </div>
         </div>
       </a>
       
-      <div class="user-button">
-        <button type="submit" class="justify-content-center submit">
+      <div class="user-button hidden">
+        <button type="submit" id="ommit" class="justify-content-center submit">
             <span></span>
             <span></span>
             <span></span>
             <span></span>
-            Finalizar
+            Omitir
         </button>
+        <button type="submit" id="end" class="justify-content-center none" disabled>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          Finalizar
+      </button>
     </div>
   </form>
 </div>

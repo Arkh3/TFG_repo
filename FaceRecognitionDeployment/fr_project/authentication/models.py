@@ -3,8 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from .userManager import UserManager
 from django.core.mail import send_mail
+from django.conf import settings
+import os
 # Create your models here.
-
 
 # Create your models here.
 class User(AbstractBaseUser, PermissionsMixin):
@@ -39,14 +40,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # ------------------------------------------------------
 
-
     #TODO: crear un reconocedor con 30 imagenes
 
     #TODO: reemplazar el reconocedor: borrar el actual y crear otro nuevo con el reconocedor de 30 imágenes
 
     #TODO: pasarle 5 imágenes y que valide las 5 y diga si es el o no
-
-    
 
     def clean(self):
         super().clean()
@@ -55,3 +53,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
+        
+    def get_tmp_imgs_path(self):
+        ret = os.path.join(settings.TMP_IMAGES_PATH,str(self.id))
+        
+        if not os.path.isdir(ret):
+            os.mkdir(ret)
+            
+        return ret

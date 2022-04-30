@@ -1,15 +1,6 @@
 /*-----------------------------------------------------------*/
 /*Para el formato de las letras de colores*/
 
-.container {
-  padding: 1vw;
-  position: absolute;
-  top: 50%;
-  left: 40%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
-}
-
 .background-color p {
   color: #000;
   font-family: 'montserrat';
@@ -46,23 +37,19 @@
 /*Para el formato del login*/
 
 html {
-    height: 100%;
   }
   body {
     margin:0;
     padding:0;
     font-family: sans-serif;
     background: linear-gradient(#141e30, #243b55);
-    /*background-image: url("../imgs/bckground.jpg");*/
   }
 
+  .row{--bs-gutter-x: 0;}
+
   .login-box {
-    position: absolute;
-    top: 50%;
-    left: 65%;
     width: 400px;
     padding: 40px;
-    transform: translate(-50%, -50%);
     background: rgba(0,0,0,.5);
     box-sizing: border-box;
     box-shadow: 0 15px 25px rgba(0,0,0,.6);
