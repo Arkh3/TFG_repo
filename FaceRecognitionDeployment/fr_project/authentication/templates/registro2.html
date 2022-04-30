@@ -5,50 +5,50 @@
 
 <div class="login-box mx-auto">
 
-    <h2>Register</h2>
+  <h2>Register</h2>
 
-    <h2>{{email}}</h2>
-    
-    <form action="{% url 'register2' %}" method='POST' enctype="multipart/form-data"> 
-      {% csrf_token %}
-      
-      <a href="#">
-        <div class="camera-area" id="radiotfoto">
-          <div id="withCameraPic">
-            <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
-            <p class="pr-4 camera-div-text">Click aquí para empezar
-            <p>
-          </div>
-  
-          <!-- VER DND PONER LO DE TURN_OFF CAMARA EN EL JS -->
-  
-          <div id="withOutCameraPic" class="none">
-            <div class="container_radio">
-              <video id="video" autoplay="autoplay" class="video_container none"></video>
-            </div>
-            <canvas id="canvas" class="none"></canvas>
-            <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
-          </div>
+  <h2>{{email}}</h2>
+
+  <a href="#">
+    <div class="camera-area" id="radiotfoto">
+      <div id="withCameraPic">
+        <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
+        <p class="pr-4 camera-div-text">Click aquí para empezar
+        <p>
+      </div>
+
+      <!-- VER DND PONER LO DE TURN_OFF CAMARA EN EL JS -->
+
+      <div id="withOutCameraPic" class="none text-center" >
+        <div class="container_radio">
+          <video id="video" autoplay="autoplay" class="video_container none"></video>
         </div>
-      </a>
-      
-      <div class="user-button hidden">
-        <button type="submit" id="ommit" class="justify-content-center submit">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Omitir
-        </button>
-        <button type="submit" id="end" class="justify-content-center none" disabled>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          Finalizar
-      </button>
+        <canvas id="canvas" class="none"></canvas>
+        <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
+      </div>
+      <p id="loading" class="text-info">prueba</p>
     </div>
-  </form>
+  </a>
+
+  <!-- TODO: convertir estos en un solo boton y que cambie el texto en el js -->
+
+  <div class="user-button hidden">
+    <a href="{% url 'welcome' %}" id="ommit" class="justify-content-center submit">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      Omitir
+    </a>
+
+    <a href="{% url 'welcome' %}" id="end"  class="justify-content-center submit none" disabled>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      Finalizar
+    </a>
+  </div>
 </div>
 
 <script src="{% static 'js/camera.js' %}"></script>

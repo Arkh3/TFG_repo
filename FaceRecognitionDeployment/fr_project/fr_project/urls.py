@@ -29,6 +29,4 @@ urlpatterns = [
     path('register2/', views.register2, name='register2'),
     path('welcome/', views.welcome, name='welcome'),
     path('logout/', views.logoutUser, name='logout'),
-    path('upload_register/', views.upload_register, name='upload_register'),
-    #path('upload_login/', views.upload_register, name='upload_login'),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

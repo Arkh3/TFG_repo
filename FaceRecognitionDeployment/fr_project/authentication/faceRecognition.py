@@ -33,6 +33,8 @@ def cleanDirectory(path):
 
 def parseImages(imagesPath, tmpImagesPath):
 
+    ret = 0
+
     cleanDirectory(tmpImagesPath)
 
     for imageName in os.listdir(imagesPath):
@@ -53,19 +55,18 @@ def parseImages(imagesPath, tmpImagesPath):
 
             id = len(os.listdir(tmpImagesPath)) + 1
             cv.imwrite(os.path.join(tmpImagesPath, str(id) + ".jpg"), mainFace)
+            ret += 1
+
+    return ret
 
 
 def createRecognizer(imagesPath, recognizerPath):
 
-    tmpImagesPath = "/code/authentication/testProcessedImages"
-    
     known_encodings = []
 
-    parseImages(imagesPath, tmpImagesPath)
+    for imagePath in os.listdir(imagesPath):
 
-    for imagePath in os.listdir(tmpImagesPath):
-
-        imgPath = os.path.join(tmpImagesPath, imagePath)
+        imgPath = os.path.join(imagesPath, imagePath)
         
         known_image = face_recognition.load_image_file(imgPath)
         known_encoding = face_recognition.face_encodings(known_image)
@@ -77,14 +78,11 @@ def createRecognizer(imagesPath, recognizerPath):
     pickle.dump(known_encodings, f)
     f.close()
 
-    cleanDirectory(tmpImagesPath)
+    cleanDirectory(imagesPath)
+    os.rmdir(imagesPath)
+
 
     return True
-
-
-#Le pasas una imagen y debe recortarla y guardar su encoding cuando haya 5 imagenes que deje de hacer esto
-def parseImageLogin(image, tmpPath):
-    pass
 
 
 #TODO: hay que asegurarse de que las imagenes en imagespath son 5

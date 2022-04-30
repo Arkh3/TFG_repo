@@ -8,7 +8,7 @@ import os, base64
 
 # Create your views here.
 from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
-from .faceRecognition import createRecognizer
+from .faceRecognition import createRecognizer, parseImages
 
 
 @require_http_methods(["GET", "POST"])
@@ -153,41 +153,67 @@ def register1(request):
     # TODO maybe: mandarle un correo para confirmarle (y que tenga una campo en la bbdd que sea is_verified) (el usuario tiene una funcion de send emaill creo mirar en models.py)
 
     User.objects.create_user(email, pwd1)
-
+    
     user = authenticate(request, email=email, password=pwd1)
+    login(request, user)
 
     if user is None:
         return HttpResponseBadRequest(f"Error NO SE HA GUARDADO BIEN EL USUARIO")
     
+    request.session['registering'] = True
+    request.session['repeat'] = False
     request.session['email'] = email
     return redirect('/register2/')
 
 
-# TODO: register un boton que evoluciona: omitir el paso > bloqueo > finalizar
 @require_http_methods(["GET", "POST"])
 def register2(request):
     if request.method == "GET":
-        if 'email' in request.session:
+        if 'registering' in request.session and request.session['registering']:
+            request.session.pop("registering")
             return render(request, "registro2.html", {'email':request.session['email']})
         else:
             return redirect('register1')
-      
-    email = request.session['email']
 
-    user = User.objects.get(email=email)
+    if request.user.is_authenticated:
+        
+        email = request.session['email']
+        user = User.objects.get(email=email)
+        tmp_path =  user.get_tmp_raw_imgs_path()
+        recognizerPath = user.get_recognizer_path()
+        tmpImagesPath = user.get_tmp_processed_imgs_path()
+        
+        numImgs = 10
 
-    recognizerPath = os.path.join(settings.RECOGNIZERS_PATH, str(user.id))
+        for i in range(numImgs):
+            base64_img = request.POST['fotos['+str(i)+'][]']
 
-    # TODO: Que el reconocedor se entrene con las imágenes de la webcam
-    imagesPath = "/code/authentication/testImagesRegister"
+            data_img = base64.decodebytes(base64_img.encode('ascii'))
 
-    # TODO: a lo mejor hay que asegurarse que se crea el recognizer antes de hacer el save()
-    if createRecognizer(imagesPath, recognizerPath):
-        user.recognizer = recognizerPath
-        user.save()
-    
-    login(request, user, backend='authentication.backends.FR_backend')
-    return redirect("welcome")
+            id = len(os.listdir(tmp_path)) + 1
+            
+            f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
+            f.write(data_img)
+            f.close()
+
+        numFaces = parseImages(tmp_path, tmpImagesPath)
+
+        if numFaces < 7:
+            #TODO: delete images in tmpImagesPath and tmp_path
+            request.session['repeat'] = True
+            raise Exception("Numfaces must be >= 7. Actual value=" + str(numFaces))
+
+        if createRecognizer(tmpImagesPath, recognizerPath):
+            user.recognizer = recognizerPath
+            user.save()
+            
+        # Clean tmp path
+        for file in os.listdir(tmp_path):
+            os.remove(os.path.join(tmp_path, file))
+
+        os.rmdir(tmp_path)
+
+        return redirect("register2")
 
 
 @require_http_methods(["GET"])
@@ -204,43 +230,3 @@ def welcome(request):
 def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/')
-
-
-def upload_register(request):
-    if request.method == "POST":
-              
-        user = User.objects.get(email=request.session['email'])
-
-        # TODO: ese 10 tambien hay que cambiarlo en el javascript ( linea 77)
-        for i in range(10):
-            base64_img = request.POST['fotos['+str(i)+'][]']
-
-            data_img = base64.decodebytes(base64_img.encode('ascii'))
-            
-            tmp_path =  user.get_tmp_imgs_path()
-
-            id = len(os.listdir(tmp_path)) + 1
-            
-            f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
-            f.write(data_img)
-            f.close()
-
-        #TODO: createRecognizer(request.session['email']) # que cojalas imagenes de user.get_tmp_imgs_path(), las vaya codificando y borrando y cuando haya codificado y borrado todas que cree el reconocedor
-        
-        #TODO: register2 debería comprobar si existe ya un reconocedor para la persona ( en caso de que exista debería poner, reconocedor creado con éxito! y poner finalizar)
-        return redirect('/register2/')
-
-
-#MANDÁNDOLE 50 IMÁGENES Y QUE EL UPLOAD_REGISTER PARSEE 30 IMÁGENES Y DE ERROR SI EN LAS 50 IMAGENES NO HA CONSEGUIDO ENCONTRAR 30 BUENAS
-
-#CHECKEA CUANTAS IMAGENES HAY (DEBERIA HABER 0 AL PRINCIPIO Y 30 AL FINAL)
-
-#COGE LA IMAGEN Y LA PARSEA, VE SI HAY UNA CARA Y HACE EL ENCODING Y LA GUARDA EN ALGUN FICHERO CON LO DE PICKLE
-
-#BORRA LA IMAGEN (O NO SE GUARDA DIRECTAMENTE)
-
-#UNA VEZ ACABE EL REGISTRO DEBERÍA LIMPIARSE LA CARPETA DE TMP
-
-
-##############
-#OTRA FORMA DE HACERLO SERÍA 

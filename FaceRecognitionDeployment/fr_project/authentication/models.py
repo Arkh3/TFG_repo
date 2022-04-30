@@ -54,10 +54,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
         
-    def get_tmp_imgs_path(self):
-        ret = os.path.join(settings.TMP_IMAGES_PATH,str(self.id))
+    def get_tmp_raw_imgs_path(self):
+        ret = os.path.join(settings.TMP_RAW_IMAGES_PATH,str(self.id))
         
         if not os.path.isdir(ret):
             os.mkdir(ret)
             
         return ret
+
+    def get_tmp_processed_imgs_path(self):
+        ret = os.path.join(settings.TMP_PROCESSED_IMGS_PATH,str(self.id))
+        
+        if not os.path.isdir(ret):
+            os.mkdir(ret)
+            
+        return ret
+
+    def get_recognizer_path (self):
+        return os.path.join(settings.RECOGNIZERS_PATH, str(self.id)) 

@@ -79,7 +79,9 @@ async function takepictures() {
     canvas = document.getElementById("canvas");
     cxt = canvas.getContext("2d");
 
-    width = 250;
+    texto = document.getElementById('loading').innerHTML = '0%'
+
+    width = 300;
     height = 250; // TODO: hacer que el aspect-ratio siga siendo igual(no deformar)
 
     video = document.getElementById("video");
@@ -94,14 +96,17 @@ async function takepictures() {
         var info = data.split(",", 2);
 
         fotos[i] = info
+        texto = document.getElementById('loading').innerHTML = i+ '0%'
         await delay(500)
     }
+
+    document.getElementById('loading').innerHTML = i+ '0%'
 
     var csrftoken = getCookie('csrftoken');
 
     $.ajax({
         type : "POST",
-        url : "/upload_register/", 
+        url : "/register2/", 
         data : {fotos :fotos, csrfmiddlewaretoken: csrftoken},
         dataType : 'json',
         success: function(){
