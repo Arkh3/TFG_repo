@@ -106,37 +106,26 @@ async function takepictures() {
 
     $.ajax({
         type : "POST",
-        url : "/register2/", 
+        url : "/register3/", 
         data : {fotos :fotos, csrfmiddlewaretoken: csrftoken},
         dataType : 'json',
         success: function(){
-            alert("Imagen guardada en servidor");                       
+            alert("Imagen guardada en servidor");          // TODO  ?
         }
     });
     document.getElementById("end").removeAttribute('disabled');
-    $("#end").removeClass("noHover");
+    document.getElementById('end').innerHTML ="<span></span><span></span><span></span><span></span>Finalizar"
+    $("#end").removeClass("none");
+    $("#end").addClass("submit");
 }
 
-$("#radiotfoto").click(function(){
-    $("#video").removeClass("none");
-    $("#withOutCameraPic").removeClass("none");
-    $("#withCameraPic").addClass("none");
-    turnOnCamera();
-}); 
 
 $("#btn_start").click(function(){      
     $("#btn_start").addClass("none");
-    // Main Buttons
-    $("#end").removeClass("none");
-    $("#end").addClass("submit noHover");
-    $("#ommit").addClass("none");
-    $("#ommit").removeClass("submit");
+    $("#end").addClass("none");
+    $("#end").removeClass("submit");
     takepictures();
 }); 
 
-/*    setTimeout(function() { //QUITO EL TEMPORIZADOR ???????????????????????
-        takepictures();
-        alert("Foto tomada en teoría xd");
-        document.getElementById("end").removeAttribute('disabled');
-        $("#end").removeClass("noHover");
-    },5000);  */
+//turnOnCamera();
+window.onload=turnOnCamera;

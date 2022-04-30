@@ -175,15 +175,24 @@ def register2(request):
         else:
             return redirect('register1')
 
-    if request.user.is_authenticated:
-        
-        email = request.session['email']
+    
+
+@require_http_methods(["GET", "POST"])
+def register3(request):
+    if request.method == "GET":
+        if request.user.is_authenticated and request.user is not None:
+            return render(request, "registro3.html", {'email':request.user, 'repeat': False})
+        else:
+            return redirect('register1')
+     
+    if request.user.is_authenticated:        
+        email = request.user
         user = User.objects.get(email=email)
         tmp_path =  user.get_tmp_raw_imgs_path()
         recognizerPath = user.get_recognizer_path()
         tmpImagesPath = user.get_tmp_processed_imgs_path()
         
-        numImgs = 10
+        numImgs = 10 # Todo constante y cabmiarlo en el JS
 
         for i in range(numImgs):
             base64_img = request.POST['fotos['+str(i)+'][]']
@@ -199,9 +208,16 @@ def register2(request):
         numFaces = parseImages(tmp_path, tmpImagesPath)
 
         if numFaces < 7:
-            #TODO: delete images in tmpImagesPath and tmp_path
-            request.session['repeat'] = True
-            raise Exception("Numfaces must be >= 7. Actual value=" + str(numFaces))
+            print("aaaaa")
+            # Clean tmp path
+            for file in os.listdir(tmp_path):
+                os.remove(os.path.join(tmp_path, file))
+                
+            # Clean tmp path
+            for file in os.listdir(tmpImagesPath):
+                os.remove(os.path.join(tmpImagesPath, file))
+                
+            return render(request, "registro3.html", {'email':request.user, 'repeat': True})  #TOdO
 
         if createRecognizer(tmpImagesPath, recognizerPath):
             user.recognizer = recognizerPath
@@ -213,8 +229,7 @@ def register2(request):
 
         os.rmdir(tmp_path)
 
-        return redirect("register2")
-
+        return redirect("/register3/")
 
 @require_http_methods(["GET"])
 def welcome(request):
