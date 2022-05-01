@@ -9,6 +9,7 @@ import os, base64
 # Create your views here.
 from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
 from .faceRecognition import createRecognizer, parseImages
+from django.http import JsonResponse
 
 
 @require_http_methods(["GET", "POST"])
@@ -60,7 +61,6 @@ def login1(request):
     # TODO: las imágenes deberían ser las de la webcam
     imagesPath = "/code/authentication/testImagesLogin2"
 
-    #TODO: hacer que:
     user = authenticate(request, email=request.session['email'], images=imagesPath)
 
     if user is not None:
@@ -175,7 +175,6 @@ def register2(request):
         else:
             return redirect('register1')
 
-    
 
 @require_http_methods(["GET", "POST"])
 def register3(request):
@@ -184,8 +183,9 @@ def register3(request):
             return render(request, "registro3.html", {'email':request.user, 'repeat': False})
         else:
             return redirect('register1')
-     
-    if request.user.is_authenticated:        
+    
+    elif request.method == "POST" and  request.user.is_authenticated:
+        
         email = request.user
         user = User.objects.get(email=email)
         tmp_path =  user.get_tmp_raw_imgs_path()
@@ -206,9 +206,9 @@ def register3(request):
             f.close()
 
         numFaces = parseImages(tmp_path, tmpImagesPath)
+        print(numFaces)
 
         if numFaces < 7:
-            print("aaaaa")
             # Clean tmp path
             for file in os.listdir(tmp_path):
                 os.remove(os.path.join(tmp_path, file))
@@ -216,12 +216,13 @@ def register3(request):
             # Clean tmp path
             for file in os.listdir(tmpImagesPath):
                 os.remove(os.path.join(tmpImagesPath, file))
-                
-            return render(request, "registro3.html", {'email':request.user, 'repeat': True})  #TOdO
+            
+            #ha fallado, volver a hacer la llamada?
+            return JsonResponse({"repeat": True}, status=400)
 
-        if createRecognizer(tmpImagesPath, recognizerPath):
-            user.recognizer = recognizerPath
-            user.save()
+        createRecognizer(tmpImagesPath, recognizerPath)
+        user.recognizer = recognizerPath
+        user.save()
             
         # Clean tmp path
         for file in os.listdir(tmp_path):
@@ -229,7 +230,11 @@ def register3(request):
 
         os.rmdir(tmp_path)
 
-        return redirect("/register3/")
+        return JsonResponse({"repeat": False}, status=200)
+
+    else:
+        return HttpResponseBadRequest(f"Error en el post a /register3/")
+
 
 @require_http_methods(["GET"])
 def welcome(request):
