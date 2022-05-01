@@ -169,23 +169,14 @@ def register1(request):
 @require_http_methods(["GET", "POST"])
 def register2(request):
     if request.method == "GET":
-        if 'registering' in request.session and request.session['registering']:
+        if 'registering' in request.session and request.session['registering'] and request.user.is_authenticated:
             request.session.pop("registering")
             return render(request, "registro2.html", {'email':request.session['email']})
         else:
             return redirect('register1')
-
-
-@require_http_methods(["GET", "POST"])
-def register3(request):
-    if request.method == "GET":
-        if request.user.is_authenticated and request.user is not None:
-            return render(request, "registro3.html", {'email':request.user, 'repeat': False})
-        else:
-            return redirect('register1')
     
     elif request.method == "POST" and  request.user.is_authenticated:
-        
+ 
         email = request.user
         user = User.objects.get(email=email)
         tmp_path =  user.get_tmp_raw_imgs_path()
@@ -232,8 +223,6 @@ def register3(request):
 
         return JsonResponse({"repeat": False}, status=200)
 
-    else:
-        return HttpResponseBadRequest(f"Error en el post a /register3/")
 
 
 @require_http_methods(["GET"])

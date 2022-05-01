@@ -36,7 +36,6 @@ function turnOffCamera() {  // No lo estoy usando por ahora
     //video.load();
 }
 
-
 function dataURItoBlob( dataURI ) {
 
 	var byteString = atob( dataURI.split( ',' )[ 1 ] );
@@ -73,7 +72,12 @@ function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
 
+//TODO: hacer que el boton de start no aparezca hasta que no se haya iniciado la webcam
+
 async function takepictures() {
+
+    $("#loading").addClass("text-info");
+    $("#loading").removeClass("text-warning");
 
     const fotos = []
     canvas = document.getElementById("canvas");
@@ -106,14 +110,12 @@ async function takepictures() {
 
     $.ajax({
         type : "POST",
-        url : "/register3/", 
+        url : "/register2/", 
         data : {fotos :fotos, csrfmiddlewaretoken: csrftoken},
         dataType : 'json',
         success: function (response) {
             document.getElementById("end").removeAttribute('disabled');
             document.getElementById('end').innerHTML ="<span></span><span></span><span></span><span></span>Finalizar";
-            $("#loading").addClass("text-info");
-            $("#loading").removeClass("text-warning");
             document.getElementById('loading').innerHTML = '¡Reconocedor facial creado con éxito!'
             $("#end").removeClass("none");
             $("#end").addClass("submit");
@@ -133,6 +135,13 @@ async function takepictures() {
         }
     });
 }
+
+$("#radiotfoto").click(function(){
+    $("#video").removeClass("none");
+    $("#withOutCameraPic").removeClass("none");
+    $("#withCameraPic").addClass("none");
+    turnOnCamera();
+}); 
 
 
 $("#btn_start").click(function(){      

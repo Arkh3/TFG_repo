@@ -9,26 +9,33 @@
 
   <h2>{{email}}</h2>
 
-  <a href="{% url 'register3' %}">
+  <a href="#">
     <div class="camera-area" id="radiotfoto">
-      
-      <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
-      <p class="pr-4 camera-div-text">Click aquí para empezar<p>
-      
+      <div id="withCameraPic">
+        <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
+        <p class="pr-4 camera-div-text">Click aquí para empezar<p>
+      </div>
+      <div id="withOutCameraPic" class="none">
+        <div class="container_radio">
+          <video id="video" autoplay="autoplay" class="video_container none"></video>
+        </div>
+        <canvas id="canvas" class="none"></canvas>
+        <p id="loading" class="text-info"></p>
+        <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
+      </div>
     </div>
   </a>
 
-  <!-- TODO: convertir estos en un solo boton y que cambie el texto en el js -->
-
-  <div class="user-button hidden">
-    <a href="{% url 'welcome' %}" id="ommit" class="justify-content-center submit">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      Omitir
-    </a>   
-  </div>
+  <a href="{% url 'welcome' %}" id="end"  class="justify-content-center submit">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    Omitir
+  </a>
 </div>
+</div>
+
+<script src="{% static 'js/camera.js' %}"></script>
 
 {% endblock %}
