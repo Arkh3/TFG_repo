@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
-from.models import User
+from .models import User
 from django.http import HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
@@ -105,7 +105,6 @@ def login1(request):
 
         else:
             return JsonResponse({"allPhotos": False}, status=200) 
-
 
 
 @require_http_methods(["GET", "POST"])
@@ -237,9 +236,10 @@ def welcome(request):
             return redirect('/')
     
 
+# TODO: cuando se borra el reconocedor, el ajax no coge el response y pone una alerta :/
+# TODO: hacer que aparezca un popup para confirmar que se va a borrar el reconocedor
 @require_http_methods(["POST"])
 def deleteRec(request):
-    print("aaa")
     if request.user.is_authenticated:
         email = request.user
         user = User.objects.get(email=email)
@@ -249,15 +249,52 @@ def deleteRec(request):
             os.remove(recogPath)
             user.recognizer = None
             user.save()
-            
+        print("aaaa")
         return JsonResponse({}, status=200)
     else:
         return JsonResponse({}, status=400)
+
 
 @require_http_methods(["GET"])
 def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/')
+
+
+@require_http_methods(["GET", "POST"])
+def resetPass(request):
+    if request.method == "GET": # TODO: poner las condiciones bien
+        if request.user.is_authenticated:    
+            return render(request, "resetPass.html", {"form": ResetPwdForm()})
+        else:
+            return redirect("/")
+    
+    elif request.method == "POST" and request.user.is_authenticated:
+        email = request.user
+
+        form = ResetPwdForm(request.POST)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
+
+        # Toma los datos limpios del formulario
+        password_old = form.cleaned_data['password0']
+        password_new_1 = form.cleaned_data['password1']
+        password_new_2 = form.cleaned_data['password2']
+
+        user = authenticate(request, email=email, password=password_old)
+
+        if user is not None :
+            if checkPassword(password_new_1, password_new_2):
+                User.objects.changePassword(email, password_new_1)
+                user = authenticate(request, email=email, password=password_new_1)
+                login(request, user) 
+                return redirect("/welcome/")
+            else:
+                return HttpResponseBadRequest("La nueva contraseña no cumple los requisitos")
+
+        else:
+            return HttpResponseBadRequest("La contraseña actual no es la correcta")
 
 
 ########################### AUX FUNCTIONS ######################################
@@ -283,11 +320,5 @@ def checkPassword(pwd1, pwd2):
 
     return True
 
-@require_http_methods(["GET", "POST"])
-def resetPass(request):
-     if request.method == "GET": # TODO: poner las condiciones bien
-        return render(request, "resetPAss.html", {"form": ResetPwdForm()})
-    
-    # POST
-    # TODO:
+
         

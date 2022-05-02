@@ -3,7 +3,6 @@ from django.apps import apps
 from django.contrib.auth.hashers import make_password
 from django.utils.translation import gettext_lazy as _
 
-
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -31,4 +30,11 @@ class UserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self._create_user(email, password, **extra_fields)
+        return self._create_user(email, password)
+
+    def changePassword(self, email, newPassword):
+        user = self.get(email=email)
+        user.password = make_password(newPassword)
+        user.save(using=self._db)
+        return user
+

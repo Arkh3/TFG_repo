@@ -1,6 +1,7 @@
 var localstream, canvas, video, cxt;
 
 function turnOnCamera() {
+     /*TODO: cuando no hay reconocedor aqui da un error que no afecta a nada en login1 ya uqe canvas no existe*/
     canvas = document.getElementById("canvas");
     cxt = canvas.getContext("2d");
     video = document.getElementById("video");
