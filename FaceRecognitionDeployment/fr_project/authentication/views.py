@@ -7,10 +7,11 @@ from django.conf import settings
 import os, base64
 from .faceRecognition import parseImage
 # Create your views here.
-from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
+from .forms import RegisterForm, LoginEmailForm, LoginPwdForm, ResetPwdForm
 from django.http import JsonResponse
 import math
 
+# TODO: arreglar el spaninglish
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -227,3 +228,12 @@ def checkPassword(pwd1, pwd2):
         return False
 
     return True
+
+@require_http_methods(["GET", "POST"])
+def resetPass(request):
+     if request.method == "GET": # TODO: poner las condiciones bien
+        return render(request, "resetPAss.html", {"form": ResetPwdForm()})
+    
+    # POST
+    # TODO:
+        

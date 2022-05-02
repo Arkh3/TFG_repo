@@ -1,0 +1,32 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+
+<div class="login-box mx-auto">
+
+  <h2>Reset password</h2>
+
+  <form action="{% url 'resetPass' %}" method='POST' enctype="multipart/form-data"> 
+      {% comment %} CAMBIAR LA URL  {% endcomment %}
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="user-box">
+      {{field}}
+      {{field.label_tag}}
+    </div>
+    {% endfor %}
+
+    <div class="user-button">
+      <button type="submit" class="justify-content-center submit">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
