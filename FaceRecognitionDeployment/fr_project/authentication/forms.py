@@ -4,6 +4,12 @@ from django import forms
 class LoginPwdForm(forms.Form):
     """Formulario para recolectar la contraseña usuarios"""
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    
+class ResetPwdForm(forms.Form):
+    """Formulario para recolectar la contraseña usuarios"""
+    password0 = forms.CharField(label='Old Password', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='New Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat your new password', widget=forms.PasswordInput)
 
 class LoginEmailForm(forms.Form):
     """Formulario para recolectar el email usuarios"""

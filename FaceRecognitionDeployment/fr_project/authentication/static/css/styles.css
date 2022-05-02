@@ -6,7 +6,6 @@
   font-family: 'montserrat';
   font-size: 3vw;
   font-weight: bold;
-  max-width: 700px;
   text-align: center;
   background: rgba(255, 253, 160, 1);
   background: -webkit-linear-gradient( left, #00ffff 0%, #97fba0 25%, #97b1fb 50%, #00ffff 100%) repeat;
@@ -47,7 +46,7 @@ html {
 
   .row{--bs-gutter-x: 0;}
 
-  .login-box {
+  .login-box {    
     width: 400px;
     padding: 40px;
     background: rgba(0,0,0,.5);
@@ -300,3 +299,39 @@ html {
   .none {
     display: none;
   }
+
+  .settings {
+    width: 40px;
+    filter: invert(0.8);
+  }
+
+/* -----------WELCOME--------------- */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: rgba(0,0,0,.5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;
+  z-index: 1;
+  min-width: 220px;
+  text-align: left;
+}
+
+.dropdown-content a {
+  color: #fff;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {color: #03e9f4}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}

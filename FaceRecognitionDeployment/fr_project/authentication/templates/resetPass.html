@@ -4,9 +4,10 @@
 
 <div class="login-box mx-auto">
 
-  <h2>Register</h2>
+  <h2>Reset password</h2>
 
-  <form action="{% url 'register1' %}" method='POST'>
+  <form action="{% url 'resetPass' %}" method='POST' enctype="multipart/form-data"> 
+      {% comment %} CAMBIAR LA URL  {% endcomment %}
     {% csrf_token %}
 
     {% for field in form %}
@@ -16,22 +17,13 @@
     </div>
     {% endfor %}
 
-    <label class="remeber-user">
-      <input type="checkbox" id="field_terms" value="first_checkbox" required>
-      Acepto todos los <u>Términos y Condiciones</u>
-    </label>
-
-    <p class="change-form">
-      ¿Ya tienes cuenta? <a  href="{% url 'login1' %}"> Inicia sesión</a>
-    <p>
-
     <div class="user-button">
       <button type="submit" class="justify-content-center submit">
         <span></span>
         <span></span>
         <span></span>
         <span></span>
-        Siguiente
+        Submit
       </button>
     </div>
   </form>

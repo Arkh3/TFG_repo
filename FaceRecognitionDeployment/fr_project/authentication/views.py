@@ -7,10 +7,11 @@ from django.conf import settings
 import os, base64
 from .faceRecognition import parseImage
 # Create your views here.
-from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
+from .forms import RegisterForm, LoginEmailForm, LoginPwdForm, ResetPwdForm
 from django.http import JsonResponse
 import math
 
+# TODO: arreglar el spaninglish
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -224,16 +225,34 @@ def register2(request):
                 return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200) # EN VEZ DE NUMFACES PUEDO PASARLE EL PORCENTAJE DE FOTOS QUE NECESITO
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["GET", "POST"])
 def welcome(request):
-    if 'email' in request.session:
-        request.session.pop("email")
+    if request.method == "GET":
+        if 'email' in request.session:
+            request.session.pop("email")
 
+        if request.user.is_authenticated:
+            return render(request, "welcome.html")
+        else:
+            return redirect('/')
+    
+
+@require_http_methods(["POST"])
+def deleteRec(request):
+    print("aaa")
     if request.user.is_authenticated:
-        return render(request, "welcome.html")
+        email = request.user
+        user = User.objects.get(email=email)
+        recogPath = user.recognizer 
+        
+        if recogPath is not None:
+            os.remove(recogPath)
+            user.recognizer = None
+            user.save()
+            
+        return JsonResponse({}, status=200)
     else:
-        return redirect('/')
-
+        return JsonResponse({}, status=400)
 
 @require_http_methods(["GET"])
 def logoutUser(request):
@@ -263,3 +282,12 @@ def checkPassword(pwd1, pwd2):
         return False
 
     return True
+
+@require_http_methods(["GET", "POST"])
+def resetPass(request):
+     if request.method == "GET": # TODO: poner las condiciones bien
+        return render(request, "resetPAss.html", {"form": ResetPwdForm()})
+    
+    # POST
+    # TODO:
+        
