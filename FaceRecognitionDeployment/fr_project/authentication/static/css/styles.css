@@ -47,7 +47,7 @@ html {
 
   .row{--bs-gutter-x: 0;}
 
-  .login-box {
+  .login-box {    
     width: 400px;
     padding: 40px;
     background: rgba(0,0,0,.5);
@@ -299,4 +299,9 @@ html {
   
   .none {
     display: none;
+  }
+
+  .settings {
+    width: 40px;
+    filter: invert(0.5);
   }
