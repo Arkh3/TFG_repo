@@ -11,14 +11,16 @@
     </head>
     
     <body class="text-center w-100 vh-100" >
-        <div class="dropdown show float-end position-absolute">
-            <a class="btn dropdown-toggle p-3" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img class="settings" src="{% static 'imgs/setting.png' %}" alt="Camera pic">
-            </a>
-            <div class="dropdown-menu m-3" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="#">Cambiar contraseña</a>
-                <a class="dropdown-item" href="#">Reentrenar reconocedor</a>
-                <a class="dropdown-item disable" href="#">Borrar reconocedor</a>
+        <div class="position-absolute w-100 vh-100">
+            <div class="dropdown show float-start">
+                <a class="btn dropdown-toggle p-3" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="settings" src="{% static 'imgs/setting.png' %}" alt="Camera pic">
+                </a>
+                <div class="dropdown-menu m-3" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" href="{% url 'resetPass' %}">Cambiar contraseña</a>
+                    <a class="dropdown-item" href="#">Reentrenar reconocedor</a>
+                    <a class="dropdown-item disable" href="#">Borrar reconocedor</a>
+                </div>
             </div>
         </div>
 
@@ -31,7 +33,7 @@
             </div>
 
             <div class="col-6">
-                <div class="login-box">
+                <div class="login-box mx-auto">
                     <div class="user-button">
                         <a href="{% url 'logout' %}" class="justify-content-center submit"> 
                             <span></span>
@@ -47,8 +49,8 @@
         </div>
        
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        
         <script> 
-            
             const $dropdown = $(".dropdown");
             const $dropdownToggle = $(".dropdown-toggle");
             const $dropdownMenu = $(".dropdown-menu");
@@ -57,18 +59,20 @@
             $(window).on("load resize", function() {
                 
                 $dropdown.hover(
-                function() {
-                    const $this = $(this);
-                    $this.addClass(showClass);
-                    $this.find($dropdownToggle).attr("aria-expanded", "true");
-                    $this.find($dropdownMenu).addClass(showClass);
-                },
-                function() {
-                    const $this = $(this);
-                    $this.removeClass(showClass);
-                    $this.find($dropdownToggle).attr("aria-expanded", "false");
-                    $this.find($dropdownMenu).removeClass(showClass);
-                }
+                    function() {
+                        const $this = $(this);
+                        $this.addClass(showClass);
+                        $this.find($dropdownToggle).attr("aria-expanded", "true");
+                        $this.find($dropdownMenu).addClass(showClass);
+                    },
+                    function() {
+                        setTimeout(function(){
+                            const $this = $(this);
+                            $dropdown.removeClass(showClass);
+                            $dropdown.find($dropdownToggle).attr("aria-expanded", "false");
+                            $dropdown.find($dropdownMenu).removeClass(showClass);
+                        }, 2000);
+                    }
                 );
                 
             });
