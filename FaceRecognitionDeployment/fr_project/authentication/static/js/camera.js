@@ -79,7 +79,7 @@ async function takepictures() {
     $("#loading").addClass("text-info");
     $("#loading").removeClass("text-warning");
 
-    const fotos = []
+    var csrftoken = getCookie('csrftoken');
     canvas = document.getElementById("canvas");
     cxt = canvas.getContext("2d");
 
@@ -93,47 +93,54 @@ async function takepictures() {
     canvas.width = width; 
     canvas.height = height;
 
-    for(var i=0; i < 10; i++){
-    
+    allPhotos = false;
+    allRequests = false;
+    block = false;
+
+    while (!allPhotos && !allRequests){
+        block = true;
+
         cxt.drawImage(video, 0, 0, width, height);
         var data = canvas.toDataURL('image/png');    
         var info = data.split(",", 2);
+        $.ajax({
+            type : "POST",
+            url : "/register2/", 
+            data : {foto:info[1], csrfmiddlewaretoken: csrftoken},
+            dataType : 'json',
+            success: function (response) {
+                document.getElementById('loading').innerHTML =JSON.parse(response["facesProgress"])+"%";
+                var aux = JSON.parse(response["allPhotos"]);
+                if (aux){
+                    allPhotos = true;
+                    document.getElementById("end").removeAttribute('disabled');
+                    document.getElementById('end').innerHTML ="<span></span><span></span><span></span><span></span>Finalizar";
+                    document.getElementById('loading').innerHTML = '¡Reconocedor facial creado con éxito!'
+                    $("#end").removeClass("none");
+                    $("#end").addClass("submit");
+                }
+                block = false;
+            },
+            error: function (response) {
+                allRequests = true;
+                block = false;
+                document.getElementById('end').innerHTML ="<span></span><span></span><span></span><span></span>Omitir";
+                document.getElementById("end").removeAttribute('disabled');
+                $("#end").removeClass("none");
+                $("#end").addClass("submit");
+                $("#btn_start").removeClass("btn-primary");
+                $("#btn_start").addClass("btn-warning");
+                $("#btn_start").removeClass("none");
+                $("#loading").removeClass("text-info");
+                $("#loading").addClass("text-warning");
+                document.getElementById('loading').innerHTML = 'Error creando el reconocedor facial ¿Quieres reintentar?'
+                document.getElementById('btn_start').innerHTML ="Reintentar"
+            }
+        });
+        await delay(200);
 
-        fotos[i] = info
-        texto = document.getElementById('loading').innerHTML = i+ '0%'
-        await delay(500)
+        while(block){await delay(50);}
     }
-
-    document.getElementById('loading').innerHTML = i+ '0%'
-
-    var csrftoken = getCookie('csrftoken');
-
-    $.ajax({
-        type : "POST",
-        url : "/register2/", 
-        data : {fotos :fotos, csrfmiddlewaretoken: csrftoken},
-        dataType : 'json',
-        success: function (response) {
-            document.getElementById("end").removeAttribute('disabled');
-            document.getElementById('end').innerHTML ="<span></span><span></span><span></span><span></span>Finalizar";
-            document.getElementById('loading').innerHTML = '¡Reconocedor facial creado con éxito!'
-            $("#end").removeClass("none");
-            $("#end").addClass("submit");
-        },
-        error: function (response) {
-            document.getElementById('end').innerHTML ="<span></span><span></span><span></span><span></span>Omitir";
-            document.getElementById("end").removeAttribute('disabled');
-            $("#end").removeClass("none");
-            $("#end").addClass("submit");
-            $("#btn_start").removeClass("btn-primary");
-            $("#btn_start").addClass("btn-warning");
-            $("#btn_start").removeClass("none");
-            $("#loading").removeClass("text-info");
-            $("#loading").addClass("text-warning");
-            document.getElementById('loading').innerHTML = 'Error creando el reconocedor facial ¿Quieres reintentar?'
-            document.getElementById('btn_start').innerHTML ="Reintentar"
-        }
-    });
 }
 
 $("#radiotfoto").click(function(){

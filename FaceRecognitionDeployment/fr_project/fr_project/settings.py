@@ -142,6 +142,8 @@ RECOGNIZERS_PATH = "/code/authentication/recognizers"
 MEDIA_URL = 'media/'                             # Lo que mostrará en la url
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    # Donde va a buscar los archivos realmente
 
-TMP_RAW_IMAGES_PATH = os.path.join(BASE_DIR, 'authentication',  'tmp', 'rawImages')
-TMP_PROCESSED_IMGS_PATH = os.path.join(BASE_DIR, 'authentication', 'tmp', 'processedImages')
+USERS_DIRECTORY = os.path.join(BASE_DIR, 'authentication',  'users')
 
+MAX_IMG_REQUESTS = 50
+
+NEEDED_IMGS_FOR_REGISTER = 30

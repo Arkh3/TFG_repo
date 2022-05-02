@@ -5,11 +5,11 @@ from django.http import HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 import os, base64
-
+from .faceRecognition import parseImage
 # Create your views here.
 from .forms import RegisterForm, LoginEmailForm, LoginPwdForm
-from .faceRecognition import createRecognizer, parseImages
 from django.http import JsonResponse
+import math
 
 
 @require_http_methods(["GET", "POST"])
@@ -100,23 +100,6 @@ def login2(request):
 @require_http_methods(["GET", "POST"])
 def register1(request):
 
-    def checkPassword(pwd):
-        hasLetters = False
-        hasNumbers = False
-
-        for char in pwd:
-            if char.isalpha():
-                hasLetters = True
-            elif char.isnumeric():
-                hasNumbers = True
-            else:
-                return False
-
-        if len(pwd) < 8 or not hasLetters or not hasNumbers:
-            return False
-
-        return True
-
     if request.method == "GET":
 
         if 'email' in request.session:
@@ -153,8 +136,15 @@ def register1(request):
     # TODO maybe: mandarle un correo para confirmarle (y que tenga una campo en la bbdd que sea is_verified) (el usuario tiene una funcion de send emaill creo mirar en models.py)
 
     User.objects.create_user(email, pwd1)
-    
+
+
+    # TODO: el email hay que pasarlo todo a minusculas, si no falla
     user = authenticate(request, email=email, password=pwd1)
+
+    userPath = os.path.join(settings.USERS_DIRECTORY, str(user.id))
+    if not os.path.isdir(userPath):
+        os.mkdir(userPath)
+        
     login(request, user)
 
     if user is None:
@@ -166,6 +156,7 @@ def register1(request):
     return redirect('/register2/')
 
 
+#TODO: hay que mejorar cuando se crean y se borran las carpetas y archivos de usuarios
 @require_http_methods(["GET", "POST"])
 def register2(request):
     if request.method == "GET":
@@ -177,52 +168,39 @@ def register2(request):
     
     elif request.method == "POST" and  request.user.is_authenticated:
  
+        #A lo mejor se puede mandar requests de 5 en 5 fotos
+
+        # SI ESTO SIGUE DANDO PROBLEMAS HACER QUE EL JAVASCRIPT MANDE 50 IMÁGENES Y QUE CUANDO LAS MANDE
+        # DEVUELVA UN PARAMETRO EN EL REQUEST DE TIPO DONE=True y  QUE CUANDO LLEGUE ESE PARÁMETRO SE PROCESEN TODAS LAS IMÁGENES
+        # Y SE LE RETORNE A LA PETICION AJAX SI HA SIDO SUCCESSFULL O NO
+        # no podria hacerse el porcentaje de caras que llevamos pero se puede poner un gif de loading o processando o algo asi
+
         email = request.user
         user = User.objects.get(email=email)
         tmp_path =  user.get_tmp_raw_imgs_path()
-        recognizerPath = user.get_recognizer_path()
         tmpImagesPath = user.get_tmp_processed_imgs_path()
-        
-        numImgs = 10 # Todo constante y cabmiarlo en el JS
 
-        for i in range(numImgs):
-            base64_img = request.POST['fotos['+str(i)+'][]']
+        base64_img = request.POST['foto']
+        data_img = base64.decodebytes(base64_img.encode('ascii'))
+        id = len(os.listdir(tmp_path)) + 1
+        f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
+        f.write(data_img)
+        f.close()
 
-            data_img = base64.decodebytes(base64_img.encode('ascii'))
+        foundFace = parseImage(tmp_path, tmpImagesPath)
+        numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
+        print(str(numFaces)+"/" + str(numRequest)) # TODO: QUITAR EL PRINT
 
-            id = len(os.listdir(tmp_path)) + 1
-            
-            f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
-            f.write(data_img)
-            f.close()
+        if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
+            user.createRecognizer()
+            return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
 
-        numFaces = parseImages(tmp_path, tmpImagesPath)
-        print(numFaces)
+        elif numRequest > settings.MAX_IMG_REQUESTS:
+            user.cleanUserFolder()
+            return JsonResponse({"allPhotos": False}, status=400)
 
-        if numFaces < 7:
-            # Clean tmp path
-            for file in os.listdir(tmp_path):
-                os.remove(os.path.join(tmp_path, file))
-                
-            # Clean tmp path
-            for file in os.listdir(tmpImagesPath):
-                os.remove(os.path.join(tmpImagesPath, file))
-            
-            #ha fallado, volver a hacer la llamada?
-            return JsonResponse({"repeat": True}, status=400)
-
-        createRecognizer(tmpImagesPath, recognizerPath)
-        user.recognizer = recognizerPath
-        user.save()
-            
-        # Clean tmp path
-        for file in os.listdir(tmp_path):
-            os.remove(os.path.join(tmp_path, file))
-
-        os.rmdir(tmp_path)
-
-        return JsonResponse({"repeat": False}, status=200)
-
+        else:
+            return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200) # EN VEZ DE NUMFACES PUEDO PASARLE EL PORCENTAJE DE FOTOS QUE NECESITO
 
 
 @require_http_methods(["GET"])
@@ -239,3 +217,25 @@ def welcome(request):
 def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/')
+
+
+########################### AUX FUNCTIONS ######################################
+
+
+# TODO: maybe poner toda la logica de la contraseña aqui
+def checkPassword(pwd):
+        hasLetters = False
+        hasNumbers = False
+
+        for char in pwd:
+            if char.isalpha():
+                hasLetters = True
+            elif char.isnumeric():
+                hasNumbers = True
+            else:
+                return False
+
+        if len(pwd) < 8 or not hasLetters or not hasNumbers:
+            return False
+
+        return True

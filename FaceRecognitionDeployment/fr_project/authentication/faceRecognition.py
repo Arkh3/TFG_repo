@@ -31,31 +31,30 @@ def cleanDirectory(path):
         os.remove(os.path.join(path, file))
 
 
-def parseImages(imagesPath, tmpImagesPath):
+def parseImage(rawImagePath, tmpImagesPath):
 
-    ret = 0
+    ret = False
 
-    cleanDirectory(tmpImagesPath)
+    imageName = os.listdir(rawImagePath)[0]
+    imagePath = os.path.join(rawImagePath, imageName)
 
-    for imageName in os.listdir(imagesPath):
+    image = face_recognition.load_image_file(imagePath)
 
-        imagePath = os.path.join(imagesPath, imageName)
+    mainFaceCoordinates = detectMainFaceCoordinates(image)
 
-        image = face_recognition.load_image_file(imagePath)
+    if mainFaceCoordinates is not None: # if a face has been found
 
-        mainFaceCoordinates = detectMainFaceCoordinates(image)
+        cvImage = cv.imread(imagePath)
 
-        if mainFaceCoordinates is not None: # if a face has been found
+        mainFace = cvImage[mainFaceCoordinates["y"]:mainFaceCoordinates["y"]+mainFaceCoordinates["h"],mainFaceCoordinates["x"]:mainFaceCoordinates["x"]+mainFaceCoordinates["w"]]
+        faceDimentions = (260,260)
+        mainFace = cv.resize(mainFace, faceDimentions)
 
-            cvImage = cv.imread(imagePath)
+        id = len(os.listdir(tmpImagesPath)) + 1
+        cv.imwrite(os.path.join(tmpImagesPath, str(id) + ".jpg"), mainFace)
+        ret = True
 
-            mainFace = cvImage[mainFaceCoordinates["y"]:mainFaceCoordinates["y"]+mainFaceCoordinates["h"],mainFaceCoordinates["x"]:mainFaceCoordinates["x"]+mainFaceCoordinates["w"]]
-            faceDimentions = (260,260)
-            mainFace = cv.resize(mainFace, faceDimentions)
-
-            id = len(os.listdir(tmpImagesPath)) + 1
-            cv.imwrite(os.path.join(tmpImagesPath, str(id) + ".jpg"), mainFace)
-            ret += 1
+    cleanDirectory(rawImagePath)
 
     return ret
 
