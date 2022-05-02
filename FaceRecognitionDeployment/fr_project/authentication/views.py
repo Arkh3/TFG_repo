@@ -25,7 +25,7 @@ def login0(request):
     form = LoginEmailForm(request.POST)
 
     if not form.is_valid():
-        return HttpResponseBadRequest(f"Error en los datos del formulario00: {form.errors}")
+        return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
 
     # Toma los datos limpios del formulario
     email = form.cleaned_data['email']
@@ -54,20 +54,57 @@ def login1(request):
 
             hasRecon = user.recognizer is not None
             #TODO: Si no existe el reconocedor que se ponga en rojo y le de una explicación de que tiene que activar el reconocimiento facial en los ajustes una vez iniciado sesión
-            return render(request, "login1.html", {'email': request.session['email'], 'hasRecon': hasRecon})
+            #TODO: quitar el hover de esa parte
+            return render(request, "login1.html", {'email': email, 'hasRecon': hasRecon})
         else:
             return redirect("/")
 
-    # TODO: las imágenes deberían ser las de la webcam
-    imagesPath = "/code/authentication/testImagesLogin2"
-
-    user = authenticate(request, email=request.session['email'], images=imagesPath)
-
-    if user is not None:
-        login(request, user) # Registra el usuario en la sesión
-        return redirect('/welcome/')
+    #TODO: esto debería poder hacerse desde cualquier máquina pero no se puede hacer desde dos máquinas simultaneamlente
+    if 'email' not in request.session:
+        return JsonResponse({"allPhotos": False, "noEmail":True}, status=400) # TODO: esto tiene que funcionar con el ajax
     else:
-        return HttpResponseBadRequest(f"Error: reconocimiento facial fallido incorrecta")
+        email = request.session['email']
+
+    user = User.objects.get(email=email)
+
+    numRequest, numFaces = user.setAndGetMetadata(newRequest = False, newFace = False)
+
+    #TODO GRANDE: A LO MEJOR SE PUEDE HACER EL PARSEAR LAS IMÁGENES YA (QUE CUANDO LAS PARSEE GUARDE YA LOS ENCODINGS EN VEZ DE GUARDAR LA VERSION RECORTADAA Y LUEGO HACER EL ENCODING)
+    #tambien se puede hacer en el register
+
+    if numFaces >= settings.NEEDED_IMGS_FOR_LOGIN or numRequest > settings.MAX_IMG_REQUESTS:
+        user.cleanUserFolder()
+        return JsonResponse({"allPhotos": False, "noEmail":False}, status=400)
+    else:
+        tmp_path =  user.get_tmp_raw_imgs_path()
+        tmpImagesPath = user.get_tmp_processed_imgs_path()
+
+        base64_img = request.POST['foto']
+        data_img = base64.decodebytes(base64_img.encode('ascii'))
+        id = len(os.listdir(tmp_path)) + 1
+        f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
+        f.write(data_img)
+        f.close()
+
+        foundFace = parseImage(tmp_path, tmpImagesPath)
+        numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
+
+        if numFaces == settings.NEEDED_IMGS_FOR_LOGIN:
+            user2 = authenticate(request, email=request.session['email'], images=tmpImagesPath) #TODO: revisar que el reconocimiento facial este bien
+            user.cleanUserFolder()
+            if user2 is not None:
+                login(request, user2)
+                return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
+            else:
+                return JsonResponse({"allPhotos": False, "noEmail":False}, status=400)
+            
+        elif numRequest > settings.MAX_IMG_REQUESTS:
+            user.cleanUserFolder()
+            return JsonResponse({"allPhotos": False, "noEmail":False}, status=400)
+
+        else:
+            return JsonResponse({"allPhotos": False}, status=200) 
+
 
 
 @require_http_methods(["GET", "POST"])
@@ -142,7 +179,6 @@ def register1(request):
     return redirect('/register2/')
 
 
-#TODO: hay que mejorar cuando se crean y se borran las carpetas y archivos de usuarios
 @require_http_methods(["GET", "POST"])
 def register2(request):
     if request.method == "GET":
@@ -152,7 +188,7 @@ def register2(request):
         else:
             return redirect('register1')
     
-    elif request.method == "POST" and  request.user.is_authenticated:
+    elif request.user.is_authenticated:
  
         #TODO: Para reducir la complejidad a lo mejor se puede mandar requests de 5 en 5 fotos
         email = request.user

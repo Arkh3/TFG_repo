@@ -2,6 +2,7 @@ import face_recognition
 import os
 import cv2 as cv
 import pickle
+from django.conf import settings
 
 
 def detectMainFaceCoordinates(frame):
@@ -84,7 +85,6 @@ def createRecognizer(imagesPath, recognizerPath):
     return True
 
 
-#TODO: hay que asegurarse de que las imagenes en imagespath son 5
 def recognize(recognizerPath, imagesPath):
 
     numRecognizedImages = 0
@@ -99,7 +99,7 @@ def recognize(recognizerPath, imagesPath):
 
         image = face_recognition.load_image_file(imgPath)
 
-        unknown_encoding = face_recognition.face_encodings(image, known_face_locations=None)# TODO: se le pueden pasar las localizaciones de las caras en la imagen ( en nuesttro caso hay solo una localización y las cordenadas son las esquinas de toda la imagen)
+        unknown_encoding = face_recognition.face_encodings(image, known_face_locations=None) # TODO: se le pueden pasar las localizaciones de las caras en la imagen ( en nuesttro caso hay solo una localización y las cordenadas son las esquinas de toda la imagen)
 
         if len(unknown_encoding) == 1:
             results = face_recognition.compare_faces(knownEncodings, unknown_encoding[0], tolerance=0.6)
@@ -112,14 +112,11 @@ def recognize(recognizerPath, imagesPath):
                 else:
                     numFalses += 1
 
-            tolerance =  1/6 # the lower this is, the better (but it might not recongize anyone if its too low)
+            tolerance =  1/10 # the lower this is, the better (but it might not recongize anyone if its too low)
 
-            if numFalses > len(knownEncodings) * tolerance:
-                print("Image " + imgPath + " not recognized with recognizer " + recognizerPath)
+            if numFalses > len(knownEncodings) * settings.RECOGNIZE_TOLERANCE:
+                pass
             else:
-                print("Image " + imgPath + " was recognized!")
                 numRecognizedImages += 1
-        else:
-            print("While encoding: " + str(len(unknown_encoding)) + " faces where found in " + imgPath + " (only 1 face should be found)")
 
     return  numRecognizedImages >= 4

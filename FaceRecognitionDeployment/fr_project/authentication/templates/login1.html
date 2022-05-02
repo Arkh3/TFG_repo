@@ -9,69 +9,45 @@
 
   <h2>{{email}}</h2>
 
-  <form method='POST' id="frm_foto">
-    <!-- action="{% url 'login1' %}"  -->
-    {% csrf_token %}
-
-    <div class="user-box">
-      <input type="hidden" name="email" id="id_email" value={{email}}>
-    </div>
-
-    {% if hasRecon %} 
-        <a href="#">
-          <div class="camera-area" id="radiotfoto">
-            <div id="withCameraPic">
-              <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Reconocedor">
-              <p class="pr-4 camera-div-text">Click aquí para empezar
-              <p>
-            </div>
-
-            <!-- VER DND PONER LO DE TURN_OFF CAMARA EN EL JS -->
-
-            <div id="withOutCameraPic" class="none">
-              <div class="container_radio">
-                <video id="video" autoplay="autoplay" class="video_container none"></video>
-              </div>
-              <canvas id="canvas" class="none"></canvas>
-              <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
-            </div>
-          </div>
-        </a>
-    {% else %}
-        <a href="#">
-          <div class="camera-area2" id="radiotfoto">
-            <div id="withOutCameraPic">
-              <img class="camera-img" src="{% static 'imgs/noCameras.png' %}" alt="Sin reconocedor">
-              <p class="pr-4 camera-div-text"> No dispones de reconocedor
-              <p>
-            </div>
-          </div>
-        </a>
-    {% endif %}
-    
-
-    <p class="change-form">
-      ¿Correo equivocado? <a href="{% url 'login0' %}"> Usar otra cuenta</a>
-    <p>
-
-    <p class="change-form">
-      ¿Quiere iniciar sesión usando<a href="{% url 'login2' %}"> contraseña</a> ?
-    <p>
-    
-    {% if hasRecon %}
-      <div class="user-button">
-        <button type="submit" class="justify-content-center submit">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          Submit
-        </button>
+  {% if hasRecon %}
+  <a href="#">
+    <div class="camera-area" id="radiotfoto">
+      <div id="withCameraPic">
+        <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
+        <p class="pr-4 camera-div-text">Click aquí para empezar
+        <p>
       </div>
-    {% endif %}
-  </form>
+      <div id="withOutCameraPic" class="none">
+        <div class="container_radio">
+          <video id="video" autoplay="autoplay" class="video_container none"></video>
+        </div>
+        <canvas id="canvas" class="none"></canvas>
+        <p id="loading" class="text-info"></p>
+        <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
+      </div>
+    </div>
+  </a>
+  {% else %}
+  <a href="#">
+    <div class="camera-area2" id="radiotfoto">
+      <div id="withOutCameraPic">
+        <img class="camera-img" src="{% static 'imgs/noCameras.png' %}" alt="Sin reconocedor">
+        <p class="pr-4 camera-div-text"> No dispones de reconocedor
+        <p>
+      </div>
+    </div>
+  </a>
+  {% endif %}
+
+  <p class="change-form" id="correo_equivocado">
+    ¿Correo equivocado? <a href="{% url 'login0' %}"> Usar otra cuenta</a>
+  <p>
+
+  <p class="change-form" id="contrasenia">
+    ¿Quiere iniciar sesión usando<a href="{% url 'login2' %}"> contraseña</a> ?
+  <p>
 </div>
 
-<script src="{% static 'js/camera.js' %}"></script>
+<script src="{% static 'js/camera_login.js' %}"></script>
 
 {% endblock %}
