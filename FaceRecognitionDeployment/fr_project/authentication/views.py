@@ -231,13 +231,16 @@ def welcome(request):
             request.session.pop("email")
 
         if request.user.is_authenticated:
-            return render(request, "welcome.html")
+
+            user = User.objects.get(email=request.user)
+
+            aux = user.recognizer is not None
+            return render(request, "welcome.html", {"hasRecognizer":aux})
         else:
             return redirect('/')
     
 
-# TODO: cuando se borra el reconocedor, el ajax no coge el response y pone una alerta :/
-# TODO: hacer que aparezca un popup para confirmar que se va a borrar el reconocedor
+# TODO: si el "borrar reconocedor" tiene un href="#" se ve bonico pero hace cosas raras, sin el href funciona bien pero se ve feo
 @require_http_methods(["POST"])
 def deleteRec(request):
     if request.user.is_authenticated:
@@ -249,10 +252,9 @@ def deleteRec(request):
             os.remove(recogPath)
             user.recognizer = None
             user.save()
-        print("aaaa")
-        return JsonResponse({}, status=200)
+        return JsonResponse({"a": True}, status=200)
     else:
-        return JsonResponse({}, status=400)
+        return JsonResponse({"b": True}, status=400)
 
 
 @require_http_methods(["GET"])
@@ -295,6 +297,60 @@ def resetPass(request):
 
         else:
             return HttpResponseBadRequest("La contraseña actual no es la correcta")
+
+
+#TODO: A LO MEJOR SE PUEDEN REUTILIZAR LAS VISTAS Y HTMLS DE REGISTRO2 Y CREATE RECOGNIZER QUE HACEN COSITAS MUY PARECIDAS
+# TODO cuando en el menú se le de a cambiar el reconocimiento facial poner una alarma en plan bruh se te va a borrar el reconocedor facial
+@require_http_methods(["GET", "POST"])
+def createRecognizer(request):
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            email = request.user
+            user = User.objects.get(email=email)
+            recogPath = user.recognizer 
+            
+            if recogPath is not None:
+                os.remove(recogPath)
+                user.recognizer = None
+                user.save()
+            return render(request, "createRecognizer.html", {'email':request.user})
+        else:
+            return redirect('register1')
+    
+    elif request.user.is_authenticated:
+ 
+        #TODO: Para reducir el numero de requests: se puede mandar requests de 5 en 5 fotos
+        email = request.user
+        user = User.objects.get(email=email)
+
+        numRequest, numFaces = user.setAndGetMetadata(newRequest = False, newFace = False)
+
+        if numFaces >= settings.NEEDED_IMGS_FOR_REGISTER or numRequest > settings.MAX_IMG_REQUESTS:
+            return JsonResponse({"allPhotos": False}, status=400)
+        else:
+            tmp_path =  user.get_tmp_raw_imgs_path()
+            tmpImagesPath = user.get_tmp_processed_imgs_path()
+
+            base64_img = request.POST['foto']
+            data_img = base64.decodebytes(base64_img.encode('ascii'))
+            id = len(os.listdir(tmp_path)) + 1
+            f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
+            f.write(data_img)
+            f.close()
+
+            foundFace = parseImage(tmp_path, tmpImagesPath)
+            numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
+
+            if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
+                user.createRecognizer()
+                return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
+
+            elif numRequest > settings.MAX_IMG_REQUESTS:
+                user.cleanUserFolder()
+                return JsonResponse({"allPhotos": False}, status=400)
+
+            else:
+                return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200) # EN VEZ DE NUMFACES PUEDO PASARLE EL PORCENTAJE DE FOTOS QUE NECESITO
 
 
 ########################### AUX FUNCTIONS ######################################

@@ -31,4 +31,5 @@ urlpatterns = [
     path('logout/', views.logoutUser, name='logout'),
     path('deleteRec/', views.deleteRec, name='deleteRec'),
     path('resetPass/', views.resetPass, name='resetPass'),
+    path('createRecognizer/', views.createRecognizer, name='createRecognizer'),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

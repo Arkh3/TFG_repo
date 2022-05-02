@@ -17,8 +17,14 @@
             <input type="image" class="settings " src="{% static 'imgs/setting.png' %}" alt= "Settings"/>
             <div class="dropdown-content ">
                 <a href="{% url 'resetPass' %}">Cambiar contraseña</a>
-                <a href="{% url 'register2' %}">Reentrenar reconocedor</a>
-                <a href="" id="delete" type="submit"  >Borrar reconocedor</a>
+                {% if hasRecognizer %}
+                <a href="{% url 'createRecognizer' %}">Reentrenar reconocedor</a>
+                {% else %}
+                <a href="{% url 'createRecognizer' %}">Crear reconocedor</a>
+                {% endif %}
+                {% if hasRecognizer %}
+                <a id="delete" type="submit">Borrar reconocedor</a>
+                {% endif %}
                 <a href="{% url 'logout' %}">Cerrar sesión</a>
             </div>
           </div>
@@ -61,9 +67,11 @@
                     dataType : 'json',
                     success: function (response) {
                         alert("¡Eliminado con éxito!");
+                        window.location.href = "/welcome";
                     },
                     error: function (response) {
                         alert("Error al eliminar el reconocedor, pruebe de nuevo");
+                        window.location.href = "/welcome";
                     }
                 });
             }); 
