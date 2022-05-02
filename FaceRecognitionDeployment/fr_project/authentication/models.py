@@ -42,8 +42,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # ------------------------------------------------------
 
-    #TODO: crear un reconocedor con 30 imagenes
-
     #TODO: reemplazar el reconocedor: borrar el actual y crear otro nuevo con el reconocedor de 30 imágenes
 
     #TODO: pasarle 5 imágenes y que valide las 5 y diga si es el o no
@@ -58,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def clean(self):
         super().clean()
-        self.email = self.__class__.objects.normalize_email(self.email)
+        self.email = self.email.lower()
 
 
     def email_user(self, subject, message, from_email=None, **kwargs):
