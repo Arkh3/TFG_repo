@@ -189,16 +189,34 @@ def register2(request):
                 return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200) # EN VEZ DE NUMFACES PUEDO PASARLE EL PORCENTAJE DE FOTOS QUE NECESITO
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["GET", "POST"])
 def welcome(request):
-    if 'email' in request.session:
-        request.session.pop("email")
+    if request.method == "GET":
+        if 'email' in request.session:
+            request.session.pop("email")
 
+        if request.user.is_authenticated:
+            return render(request, "welcome.html")
+        else:
+            return redirect('/')
+    
+
+@require_http_methods(["POST"])
+def deleteRec(request):
+    print("aaa")
     if request.user.is_authenticated:
-        return render(request, "welcome.html")
+        email = request.user
+        user = User.objects.get(email=email)
+        recogPath = user.recognizer 
+        
+        if recogPath is not None:
+            os.remove(recogPath)
+            user.recognizer = None
+            user.save()
+            
+        return JsonResponse({}, status=200)
     else:
-        return redirect('/')
-
+        return JsonResponse({}, status=400)
 
 @require_http_methods(["GET"])
 def logoutUser(request):
