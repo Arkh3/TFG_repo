@@ -4,6 +4,8 @@ import cv2 as cv
 import pickle
 from django.conf import settings
 
+#TODO: CREAR UNA CLASE class recognizer() que se inicialize con el path del recognizer y que implemente todos estos métodos y los que están incluidos en models.py
+
 
 def detectMainFaceCoordinates(frame):
 

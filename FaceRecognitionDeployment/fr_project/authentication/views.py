@@ -12,7 +12,6 @@ from django.http import JsonResponse
 import math
 
 # TODO: arreglar el spaninglish
-
 @require_http_methods(["GET", "POST"])
 def login0(request):
     if request.method == "GET":
@@ -133,7 +132,9 @@ def login2(request):
         return HttpResponseBadRequest(f"Error: contraseña incorrecta")
 
 
+# TODO: en register2 deberia decir Cuenta creada con éxito! quieres activar el reconocimiento facial?
 # TODO: añadir los terminos y condiciones (enlace)
+# TODO: durante la creación del reconocedor, en vez de 96% deberia quedarse parado en creando reconocedor...
 @require_http_methods(["GET", "POST"])
 def register1(request):
 
@@ -240,7 +241,7 @@ def welcome(request):
             return redirect('/')
     
 
-# TODO: si el "borrar reconocedor" tiene un href="#" se ve bonico pero hace cosas raras, sin el href funciona bien pero se ve feo
+# TODO: si el "borrar reconocedor" tiene un href="#" se ve bonico pero hace cosas raras, sin el href funciona bien pero se ve feo, se puede arreglar haciendo que salga un popup
 @require_http_methods(["POST"])
 def deleteRec(request):
     if request.user.is_authenticated:
@@ -262,7 +263,7 @@ def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/')
 
-
+#TODO: en resetPass y createRecognizer añadir un boton a la izquierda arriba con un icono de la casita que te lleve a welcome
 @require_http_methods(["GET", "POST"])
 def resetPass(request):
     if request.method == "GET": # TODO: poner las condiciones bien
@@ -299,8 +300,9 @@ def resetPass(request):
             return HttpResponseBadRequest("La contraseña actual no es la correcta")
 
 
+#TODO: Pones la contraseña y entrenas de nuevo el modelo por si no te reconoce bien porque se haya creado un modelo defectuoso o porque te haya crecido la barba o el pelo o hayas tenido un cambio radical en la cara, ...
 #TODO: A LO MEJOR SE PUEDEN REUTILIZAR LAS VISTAS Y HTMLS DE REGISTRO2 Y CREATE RECOGNIZER QUE HACEN COSITAS MUY PARECIDAS
-# TODO cuando en el menú se le de a cambiar el reconocimiento facial poner una alarma en plan bruh se te va a borrar el reconocedor facial
+#TODO cuando en el menú se le de a cambiar el reconocimiento facial poner una alarma en plan bruh se te va a borrar el reconocedor facial
 @require_http_methods(["GET", "POST"])
 def createRecognizer(request):
     if request.method == "GET":

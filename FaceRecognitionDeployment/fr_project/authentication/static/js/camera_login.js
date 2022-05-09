@@ -113,7 +113,7 @@ async function takepictures() {
                 if (aux){
                     allPhotos = true;
                     block = false;
-                    window.location.href = "/welcome"; //TODO: a lo mejor es localhost:8000/welcome
+                    window.location.href = "/welcome";
                 }
                 block = false;
             },

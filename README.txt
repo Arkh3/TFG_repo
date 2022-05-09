@@ -5,8 +5,6 @@
     op3) ??
 - 'Es muy importante dar un nombre a las rutas por si lasnecesitamos dentro del programa. Nunca debemos escribir las URL a
     mano dentro de nuestro programa' APUNTES DE GIW
-- Check si usar GET O POST (registrarse seria get y login post ??)
-- Cear un fichero models.y para tener ahi unos users por defecto?
 - usar {% if request.user.username %}{% else %}{% endif %} en logged user 
 - AHORA MISMO ESTA UN POCO GUARRO, PUES SE LO PASO COMO ARG DE UNA CLASE A OTRA Y LOS TENGO OCULTOS EN EL FORM
 - SE QUE LAS PASSWORD DEBERIAN ESTAR EN EL PRIMER REGSITRO, ERA PARA PROBAR SOLO EL PASO DE DATOS

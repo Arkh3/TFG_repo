@@ -42,10 +42,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # ------------------------------------------------------
 
-    #TODO: reemplazar el reconocedor: borrar el actual y crear otro nuevo con el reconocedor de 30 imágenes
-
-    #TODO: pasarle 5 imágenes y que valide las 5 y diga si es el o no
-
     def createRecognizer(self):
         recognizerPath =  self.get_recognizer_path()
         createRecognizer(self.get_tmp_processed_imgs_path(), recognizerPath)
