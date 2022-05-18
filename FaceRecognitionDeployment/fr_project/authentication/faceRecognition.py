@@ -30,16 +30,13 @@ def parseImage(rawImagePath, tmpImagesPath):
 
     ret = False
 
-    imageName = os.listdir(rawImagePath)[0]
-    imagePath = os.path.join(rawImagePath, imageName)
-
-    image = face_recognition.load_image_file(imagePath)
+    image = face_recognition.load_image_file(rawImagePath)
 
     mainFaceCoordinates = detectMainFaceCoordinates(image)
 
     if mainFaceCoordinates is not None: # if a face has been found
 
-        cvImage = cv.imread(imagePath)
+        cvImage = cv.imread(rawImagePath)
 
         mainFace = cvImage[mainFaceCoordinates["y"]:mainFaceCoordinates["y"]+mainFaceCoordinates["h"],mainFaceCoordinates["x"]:mainFaceCoordinates["x"]+mainFaceCoordinates["w"]]
         faceDimentions = (260,260)

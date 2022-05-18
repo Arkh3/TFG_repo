@@ -75,14 +75,20 @@ html {
 
   .camera-area2{
     border:1px solid;
-    border-color: rgb(255, 255, 255);
+    border-color: rgb(255, 150, 0);
     margin-bottom: 10px;
     text-align: center;
   }
 
-  .login-box .camera-area .camera-img,
-  .login-box .camera-area2 .camera-img{
+  .login-box .camera-area .camera-img{
     filter: invert(0.5);
+    max-width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .login-box .camera-area2 .camera-img{
     max-width: 200px;
     display: block;
     margin-left: auto;

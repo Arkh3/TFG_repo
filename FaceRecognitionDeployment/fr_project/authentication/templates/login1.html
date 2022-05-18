@@ -28,15 +28,15 @@
     </div>
   </a>
   {% else %}
-  <a href="#">
+  <div>
     <div class="camera-area2" id="radiotfoto">
       <div id="withOutCameraPic">
         <img class="camera-img" src="{% static 'imgs/noCameras.png' %}" alt="Sin reconocedor">
-        <p class="pr-4 camera-div-text"> No dispones de reconocedor
+        <p class="pr-4 camera-div-text" style="color:tomato;"> No dispones de reconocedor
         <p>
       </div>
     </div>
-  </a>
+  </div>
   {% endif %}
 
   <p class="change-form" id="correo_equivocado">

@@ -13,9 +13,9 @@ import math
 # Create your views here.
 
 # TODO: arreglar el spaninglish
-# TODO: comentar bien todo para que esté bien especificado
+# TODO: comentar bien el código para que esté bien especificado
 # TODO: hacer que tomar las imágenes vaya más rapido plz
-# TODO: revisar el reconocimiento facial una vez esté todo acabado
+# TODO: revisar el reconocimiento facial al final cuando el resto esté acabado
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -59,7 +59,6 @@ def login1(request):
             user.cleanUserFolder()
 
             hasRecon = user.recognizer is not None
-            #TODO: quitar el hover de esa parte
             return render(request, "login1.html", {'email': email, 'hasRecon': hasRecon})
         else:
             return redirect("/")
@@ -80,15 +79,17 @@ def login1(request):
     else:
         tmp_path =  user.get_tmp_raw_imgs_path()
         tmpImagesPath = user.get_tmp_processed_imgs_path()
-
+       
+        # Take image from request and save it
         base64_img = request.POST['foto']
         data_img = base64.decodebytes(base64_img.encode('ascii'))
         id = len(os.listdir(tmp_path)) + 1
-        f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
+        raw_image_path = os.path.join(tmp_path, str(id) + ".png")
+        f = open(raw_image_path, 'wb')
         f.write(data_img)
         f.close()
 
-        foundFace = parseImage(tmp_path, tmpImagesPath)
+        foundFace = parseImage(raw_image_path, tmpImagesPath)
         numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
 
         print(str(numFaces) + "/" + str(numRequest))
