@@ -2,6 +2,8 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.apps import apps
 from django.contrib.auth.hashers import make_password
 from django.utils.translation import gettext_lazy as _
+import os
+from django.conf import settings
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -14,6 +16,12 @@ class UserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.password = make_password(password)
         user.save(using=self._db)
+
+        # Create user path
+        userPath = os.path.join(settings.USERS_DIRECTORY, str(user.id))
+        if not os.path.isdir(userPath):
+            os.mkdir(userPath)
+
         return user
 
     def create_user(self, email=None, password=None, **extra_fields):

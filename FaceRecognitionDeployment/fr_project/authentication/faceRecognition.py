@@ -4,8 +4,6 @@ import cv2 as cv
 import pickle
 from django.conf import settings
 
-#TODO: CREAR UNA CLASE class recognizer() que se inicialize con el path del recognizer y que implemente todos estos métodos y los que están incluidos en models.py
-
 
 def detectMainFaceCoordinates(frame):
 
@@ -26,12 +24,6 @@ def detectMainFaceCoordinates(frame):
         return None
 
     return biggerFace
-
-
-def cleanDirectory(path):
-    
-    for file in os.listdir(path):
-        os.remove(os.path.join(path, file))
 
 
 def parseImage(rawImagePath, tmpImagesPath):
@@ -57,8 +49,6 @@ def parseImage(rawImagePath, tmpImagesPath):
         cv.imwrite(os.path.join(tmpImagesPath, str(id) + ".jpg"), mainFace)
         ret = True
 
-    cleanDirectory(rawImagePath)
-
     return ret
 
 
@@ -80,28 +70,28 @@ def createRecognizer(imagesPath, recognizerPath):
     pickle.dump(known_encodings, f)
     f.close()
 
-    cleanDirectory(imagesPath)
-    os.rmdir(imagesPath)
-
-
     return True
 
 
 def recognize(recognizerPath, imagesPath):
 
     numRecognizedImages = 0
+
+    betterImg = [0, None]
     
+    ## Cargar el reconocedor
     f = open(recognizerPath, 'rb')
     knownEncodings = pickle.load(f)
     f.close()
 
+    ## Reconocer las imágenes con el reconocedor
     for img in os.listdir(imagesPath):
 
         imgPath = os.path.join(imagesPath, img)
 
         image = face_recognition.load_image_file(imgPath)
 
-        unknown_encoding = face_recognition.face_encodings(image, known_face_locations=None) # TODO: se le pueden pasar las localizaciones de las caras en la imagen ( en nuesttro caso hay solo una localización y las cordenadas son las esquinas de toda la imagen)
+        unknown_encoding = face_recognition.face_encodings(image)
 
         if len(unknown_encoding) == 1:
             results = face_recognition.compare_faces(knownEncodings, unknown_encoding[0], tolerance=0.6)
@@ -114,11 +104,26 @@ def recognize(recognizerPath, imagesPath):
                 else:
                     numFalses += 1
 
-            tolerance =  1/10 # the lower this is, the better (but it might not recongize anyone if its too low)
-
             if numFalses > len(knownEncodings) * settings.RECOGNIZE_TOLERANCE:
                 pass
             else:
+                if betterImg[0] < numTrues:
+                    betterImg[0] = numTrues
+                    betterImg[1] = unknown_encoding[0]
                 numRecognizedImages += 1
 
-    return  numRecognizedImages >= 4
+
+    ret = numRecognizedImages >= settings.RECOGNIZE_MIN_VALID_IMGS
+
+    ## Actualizar el reconocedor con una imágen usada para el inicio de sesión
+    if ret:
+
+        if len(knownEncodings) >= settings.MAX_MODEL_IMAGES:
+            del knownEncodings[0]
+        
+        knownEncodings.append(betterImg[1])
+        f = open(recognizerPath, 'wb')
+        pickle.dump(knownEncodings, f)
+        f.close()
+
+    return  ret

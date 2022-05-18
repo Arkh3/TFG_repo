@@ -1,80 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        {% load static %}
-        <meta charset="UTF-8">
-        <title>TFG AN AD</title>
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" >
-        <!-- CSS -->
-        <link type='text/css' href="{% static 'css\styles.css' %}" rel="stylesheet" >
-        
-    </head>
-    
-    <body class="text-center w-100 vh-100" >
-        
-        <div class="dropdown float-start m-3">
-            <input type="image" class="settings " src="{% static 'imgs/setting.png' %}" alt= "Settings"/>
-            <div class="dropdown-content ">
-                <a href="{% url 'resetPass' %}">Cambiar contraseña</a>
-                {% if hasRecognizer %}
-                <a href="{% url 'createRecognizer' %}">Reentrenar reconocedor</a>
-                {% else %}
-                <a href="{% url 'createRecognizer' %}">Crear reconocedor</a>
-                {% endif %}
-                {% if hasRecognizer %}
-                <a href="" id="delete" type="submit">Borrar reconocedor</a>
-                {% endif %}
-                <a href="{% url 'logout' %}">Cerrar sesión</a>
-            </div>
-          </div>
 
-        <div class="row h-100 align-items-center ">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>TFG AN AD</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- CSS -->
+    <link type='text/css' href="{% static 'css\styles.css' %}" rel="stylesheet">
 
-            <div class="background-color">
-                <p>Bienvenido {{request.user.email}}!</p>
-            </div>           
-            
+</head>
+
+<body class="text-center w-100 vh-100">
+    <div class="dropdown float-start m-3">
+        <input type="image" class="settings " src="{% static 'imgs/setting.png' %}" alt="Settings" />
+        <div class="dropdown-content ">
+            <a href="{% url 'resetPass' %}">Cambiar contraseña</a>
+            {% if hasRecognizer %}
+            <a href="{% url 'createRecognizer' %}">Reentrenar reconocedor</a>
+            {% else %}
+            <a href="{% url 'createRecognizer' %}">Crear reconocedor</a>
+            {% endif %}
+            {% if hasRecognizer %}
+            <a href="" id="delete" type="submit">Borrar reconocedor</a>
+            {% endif %}
+            <a href="{% url 'logout' %}">Cerrar sesión</a>
         </div>
-       
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    </div>
 
-        <script>
+    <div class="row h-100 align-items-center ">
+        <div class="background-color">
+            <p>Bienvenido {{request.user.email}}!</p>
+        </div>
+    </div>
 
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script>
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
                 }
-                return cookieValue;
             }
+            return cookieValue;
+        }
 
-            var csrftoken = getCookie('csrftoken');
+        var csrftoken = getCookie('csrftoken');
 
-            $("#delete").click(function(){
-                $.ajax({
-                    type : "POST",
-                    url : "/deleteRec/", 
-                    data : {csrfmiddlewaretoken: csrftoken},
-                    dataType : 'json',
-                    success: function (response) {
-                        alert("¡Eliminado con éxito!");
-                        window.location.href = "/welcome";
-                    },
-                    error: function (response) {
-                        alert("Error al eliminar el reconocedor, pruebe de nuevo");
-                        window.location.href = "/welcome";
-                    }
-                });
-            }); 
-        </script>
-               
+        $("#delete").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/deleteRec/",
+                data: { csrfmiddlewaretoken: csrftoken },
+                dataType: 'json',
+                success: function (response) {
+                    alert("¡Eliminado con éxito!");
+                    window.location.href = "/welcome";
+                },
+                error: function (response) {
+                    alert("Error al eliminar el reconocedor, pruebe de nuevo");
+                    window.location.href = "/welcome";
+                }
+            });
+        }); 
+    </script>
 </html>

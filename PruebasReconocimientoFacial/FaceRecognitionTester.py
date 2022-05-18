@@ -69,7 +69,7 @@ def detectMainFace(frame):
     face_cascade = loadCascade("haarcascade_frontalface_alt2.xml")
 
     #frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    #frame_gray = cv.equalizeHist(frame_gray) # TODO: probar a hacerlo sin esto para ver las diferencias en optimización y cosas de esas
+    #frame_gray = cv.equalizeHist(frame_gray)
     
     # Detectar caras  
     faces = face_cascade.detectMultiScale(frame) # ver cual es el tamaño mínimo de cara que debería reconocer (no queremos que reconozca caras muy pequeñas)
@@ -77,8 +77,6 @@ def detectMainFace(frame):
     biggerFace = {"x":0, "y":0, "w":0, "h":0}
 
     for (x,y,w,h) in faces:
-
-        #cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2) # TODO: esto creo que debería borrarlo 
 
         if (biggerFace["w"] * biggerFace["h"]) < (w * h):   # guardar solo la cara más grande (ver a ver si deberíamos coger las 2 caras mas grandes en caso de que las dos estén cerca de tamaño)
             biggerFace["x"], biggerFace["y"], biggerFace["w"], biggerFace["h"] = x, y, w, h
@@ -164,7 +162,6 @@ def trainDlib(user, lenForTraining):
 
     print("Training: dlib_"+ str(lenForTraining) + ".dat")
 
-    #TODO: cambiarlo como si fuera un while e ir aumentando la i
     numImgs = min(len(os.listdir(trainingImagesPath)), lenForTraining)
     for imagePath in os.listdir(trainingImagesPath)[0:numImgs]:
         e1 = cv.getTickCount()

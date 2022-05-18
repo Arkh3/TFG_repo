@@ -6,12 +6,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 import os, base64
 from .faceRecognition import parseImage
-# Create your views here.
 from .forms import RegisterForm, LoginEmailForm, LoginPwdForm, ResetPwdForm
 from django.http import JsonResponse
 import math
 
+# Create your views here.
+
 # TODO: arreglar el spaninglish
+# TODO: comentar bien todo para que esté bien especificado
+# TODO: hacer que tomar las imágenes vaya más rapido plz
+# TODO: revisar el reconocimiento facial una vez esté todo acabado
+
 @require_http_methods(["GET", "POST"])
 def login0(request):
     if request.method == "GET":
@@ -51,9 +56,9 @@ def login1(request):
             email = request.session['email']
 
             user = User.objects.get(email=email)
+            user.cleanUserFolder()
 
             hasRecon = user.recognizer is not None
-            #TODO: Si no existe el reconocedor que se ponga en rojo y le de una explicación de que tiene que activar el reconocimiento facial en los ajustes una vez iniciado sesión
             #TODO: quitar el hover de esa parte
             return render(request, "login1.html", {'email': email, 'hasRecon': hasRecon})
         else:
@@ -61,16 +66,13 @@ def login1(request):
 
     #TODO: esto debería poder hacerse desde cualquier máquina pero no se puede hacer desde dos máquinas simultaneamlente
     if 'email' not in request.session:
-        return JsonResponse({"allPhotos": False, "noEmail":True}, status=400) # TODO: esto tiene que funcionar con el ajax
+        return JsonResponse({"allPhotos": False, "noEmail":True}, status=400)
     else:
         email = request.session['email']
 
     user = User.objects.get(email=email)
 
     numRequest, numFaces = user.setAndGetMetadata(newRequest = False, newFace = False)
-
-    #TODO GRANDE: A LO MEJOR SE PUEDE HACER EL PARSEAR LAS IMÁGENES YA (QUE CUANDO LAS PARSEE GUARDE YA LOS ENCODINGS EN VEZ DE GUARDAR LA VERSION RECORTADAA Y LUEGO HACER EL ENCODING)
-    #tambien se puede hacer en el register
 
     if numFaces >= settings.NEEDED_IMGS_FOR_LOGIN or numRequest > settings.MAX_IMG_REQUESTS:
         user.cleanUserFolder()
@@ -89,8 +91,10 @@ def login1(request):
         foundFace = parseImage(tmp_path, tmpImagesPath)
         numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
 
+        print(str(numFaces) + "/" + str(numRequest))
+
         if numFaces == settings.NEEDED_IMGS_FOR_LOGIN:
-            user2 = authenticate(request, email=request.session['email'], images=tmpImagesPath) #TODO: revisar que el reconocimiento facial este bien
+            user2 = authenticate(request, email=request.session['email'], images=tmpImagesPath)
             user.cleanUserFolder()
             if user2 is not None:
                 login(request, user2)
@@ -132,9 +136,7 @@ def login2(request):
         return HttpResponseBadRequest(f"Error: contraseña incorrecta")
 
 
-# TODO: en register2 deberia decir Cuenta creada con éxito! quieres activar el reconocimiento facial?
 # TODO: añadir los terminos y condiciones (enlace)
-# TODO: durante la creación del reconocedor, en vez de 96% deberia quedarse parado en creando reconocedor...
 @require_http_methods(["GET", "POST"])
 def register1(request):
 
@@ -162,16 +164,11 @@ def register1(request):
     #if not checkPassword(pwd1, pwd2):
     #    return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números).")
 
-    # TODO maybe: mandarle un correo para confirmarle (y que tenga una campo en la bbdd que sea is_verified) (el usuario tiene una funcion de send emaill creo mirar en models.py)
+    # TODO: mandarle un correo de confirmación (y que tenga una campo en la bbdd que sea is_verified)
 
     User.objects.create_user(email, pwd1)
 
     user = authenticate(request, email=email, password=pwd1)
-
-    # Create user path
-    userPath = os.path.join(settings.USERS_DIRECTORY, str(user.id))
-    if not os.path.isdir(userPath):
-        os.mkdir(userPath)
         
     login(request, user)
     
@@ -191,7 +188,7 @@ def register2(request):
     
     elif request.user.is_authenticated:
  
-        #TODO: Para reducir la complejidad a lo mejor se puede mandar requests de 5 en 5 fotos
+        #TODO: Para reducir el número de peticiones a lo mejor se puede mandar requests de 5 en 5 fotos (tambien se puede hacer en login y en create recognizer)
         email = request.user
         user = User.objects.get(email=email)
 
@@ -213,6 +210,8 @@ def register2(request):
             foundFace = parseImage(tmp_path, tmpImagesPath)
             numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
 
+            print(str(numFaces) + "/" + str(numRequest))
+
             if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
                 user.createRecognizer()
                 return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
@@ -222,7 +221,7 @@ def register2(request):
                 return JsonResponse({"allPhotos": False}, status=400)
 
             else:
-                return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200) # EN VEZ DE NUMFACES PUEDO PASARLE EL PORCENTAJE DE FOTOS QUE NECESITO
+                return JsonResponse({"allPhotos": False, "facesProgress":math.trunc(((numFaces+1)/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
 
 
 @require_http_methods(["GET", "POST"])
@@ -263,10 +262,11 @@ def logoutUser(request):
     logout(request)  # Elimina el usuario de la sesión
     return redirect('/')
 
+
 #TODO: en resetPass y createRecognizer añadir un boton a la izquierda arriba con un icono de la casita que te lleve a welcome
 @require_http_methods(["GET", "POST"])
 def resetPass(request):
-    if request.method == "GET": # TODO: poner las condiciones bien
+    if request.method == "GET":
         if request.user.is_authenticated:    
             return render(request, "resetPass.html", {"form": ResetPwdForm()})
         else:
@@ -321,7 +321,6 @@ def createRecognizer(request):
     
     elif request.user.is_authenticated:
  
-        #TODO: Para reducir el numero de requests: se puede mandar requests de 5 en 5 fotos
         email = request.user
         user = User.objects.get(email=email)
 
@@ -352,7 +351,7 @@ def createRecognizer(request):
                 return JsonResponse({"allPhotos": False}, status=400)
 
             else:
-                return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200) # EN VEZ DE NUMFACES PUEDO PASARLE EL PORCENTAJE DE FOTOS QUE NECESITO
+                return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
 
 
 ########################### AUX FUNCTIONS ######################################

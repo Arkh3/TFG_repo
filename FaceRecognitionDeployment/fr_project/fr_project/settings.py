@@ -139,13 +139,19 @@ RECOGNIZERS_PATH = "/code/authentication/recognizers"
 
 # =======
 
-MEDIA_URL = 'media/'                             # Lo que mostrará en la url
+MEDIA_URL = 'media/'                            # Lo que mostrará en la url
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    # Donde va a buscar los archivos realmente
 
 USERS_DIRECTORY = os.path.join(BASE_DIR, 'authentication',  'users')
 
+# =======
+
 MAX_IMG_REQUESTS = 50
 
-NEEDED_IMGS_FOR_REGISTER = 30
+NEEDED_IMGS_FOR_REGISTER = 20
 NEEDED_IMGS_FOR_LOGIN = 10
+
 RECOGNIZE_TOLERANCE = 1/6
+RECOGNIZE_MIN_VALID_IMGS = 8
+
+MAX_MODEL_IMAGES = 30
