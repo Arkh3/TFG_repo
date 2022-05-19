@@ -7,6 +7,7 @@ from .faceRecognition import recognize
 
 class FR_backend(BaseBackend):
     
+    ## Autenticación con contraseña
     def authenticate(self, request, email=None, password=None):
         try:
             user = User.objects.get(email=email)
@@ -19,7 +20,7 @@ class FR_backend(BaseBackend):
         except User.DoesNotExist:
             return None
 
-
+    ## Autenticación con Reconocimiento Facial
     def authenticate(self, request, email=None, images=None):
         try:
             user = User.objects.get(email=email)

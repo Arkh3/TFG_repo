@@ -4,7 +4,7 @@ import cv2 as cv
 import pickle
 from django.conf import settings
 
-
+## Dada una imagen, extrae la cara de mayor tamaño en ella
 def detectMainFaceCoordinates(frame):
 
     faces = []
@@ -25,7 +25,7 @@ def detectMainFaceCoordinates(frame):
 
     return biggerFace
 
-
+## Dada una imagen, extrae la cara principal y la guarda en tmpImagesPath
 def parseImage(rawImagePath, tmpImagesPath):
 
     ret = False
@@ -48,7 +48,7 @@ def parseImage(rawImagePath, tmpImagesPath):
 
     return ret
 
-
+## Dadas una serie de imágenes, se crea un reconocedor en recognizerPath
 def createRecognizer(imagesPath, recognizerPath):
 
     known_encodings = []
@@ -69,7 +69,7 @@ def createRecognizer(imagesPath, recognizerPath):
 
     return True
 
-
+## Dado un reconocedor y unas imágenes, se devuelve el veredicto del reconocedor
 def recognize(recognizerPath, imagesPath):
 
     numRecognizedImages = 0

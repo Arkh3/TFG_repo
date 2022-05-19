@@ -1,7 +1,6 @@
 var localstream, canvas, video, cxt;
 
 function turnOnCamera() {
-    /*TODO: cuando no hay reconocedor aqui da un error que no afecta a nada en login1 ya uqe canvas no existe*/
     canvas = document.getElementById("canvas");
     cxt = canvas.getContext("2d");
     video = document.getElementById("video");
@@ -104,7 +103,7 @@ async function takepictures() {
         var info = data.split(",", 2);
         $.ajax({
             type : "POST",
-            url : "/login1/", 
+            url : "/login_fr/", 
             data : {foto:info[1], csrfmiddlewaretoken: csrftoken},
             dataType : 'json',
             success: function (response) {

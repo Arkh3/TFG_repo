@@ -12,57 +12,64 @@ from django.contrib import messages
 
 # Create your views here.
 
-# TODO: arreglar el spaninglish
-# TODO: comentar bien el código para que esté bien documentado
 # TODO: hacer que tomar las imágenes vaya más rápido plz (haciendo requests de 5 en 5 fotos maybe) (tambien se puede hacer en login y en register)
 # TODO: revisar el reconocimiento facial al final cuando el resto esté acabado
 # TODO: (en register 1) añadir los terminos y condiciones (enlace)
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
+
     if request.method == "GET":
+
+        ## Si el usuario está autenticado le envía a /welcome
         if not request.user.is_authenticated:
             if 'email' in request.session:
                 request.session.pop("email")
             return render(request, "login0.html", {"form": LoginEmailForm()})
+
         else:
             return redirect('/welcome/')
 
+
+    ## Toma los datos limpios del formulario
     form = LoginEmailForm(request.POST)
 
     if not form.is_valid():
         messages.error(request,'Error en los datos del formulario.')
         return redirect('/')
 
-    # Toma los datos limpios del formulario
     email = form.cleaned_data['email']
 
+    ## Se asegura que el usuario existe
     if not User.objects.filter(email=email).exists():
         messages.error(request,'Ese usuario no existe')
         return redirect('/')
 
+    ## Guarda en el request el email para los pasos posteriores
     request.session['email'] = email
 
+    ## Si el usuario tiene reconocedor le envía a login_fr
+    # en caso contrario a login_pwd
     user = User.objects.get(email=email)
 
     if user.recognizer is not None:
-        return redirect('/login1/')
+        return redirect('/login_fr/')
     else:
-        return redirect('/login2/')
+        return redirect('/login_pwd/')
 
 
 @require_http_methods(["GET", "POST"])
-def login1(request):
+def login_fr(request):
     if request.method == "GET":
         if 'email' in request.session:
-            # Checkee que existe el reconocedor
+            ## Comprueba si existe el reconocedor
             email = request.session['email']
 
             user = User.objects.get(email=email)
             user.cleanUserFolder()
 
             hasRecon = user.recognizer is not None
-            return render(request, "login1.html", {'email': email, 'hasRecon': hasRecon})
+            return render(request, "login_fr.html", {'email': email, 'hasRecon': hasRecon})
         else:
             return redirect("/")
 
@@ -74,12 +81,14 @@ def login1(request):
         email = request.session['email']
         user = User.objects.get(email=email)
 
+        ## Procesa la imagen
         processedImagesPath = user.get_tmp_processed_imgs_path()
         foundFace = processImage(user, request, processedImagesPath)
         numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
 
-        print(str(numFaces) + "/" + str(numRequest))
+        #print(str(numFaces) + "/" + str(numRequest))
 
+        ## Si el número de imágenes parseadas es el correcto
         if numFaces >= settings.NEEDED_IMGS_FOR_LOGIN:
             user2 = authenticate(request, email=request.session['email'], images=processedImagesPath)
             user.cleanUserFolder()
@@ -88,29 +97,31 @@ def login1(request):
                 return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
             else:
                 return JsonResponse({"allPhotos": False, "noEmail":False}, status=400)
-            
+
+        ## Si el número de imágenes enviadas ya ha llegado al máximo
         elif numRequest > settings.MAX_IMG_REQUESTS:
             user.cleanUserFolder()
             return JsonResponse({"allPhotos": False, "noEmail":False}, status=400)
 
+        ## En caso contrario se siguen necesitando más imágenes
         else:
             return JsonResponse({"allPhotos": False}, status=200) 
 
-
+ 
 @require_http_methods(["GET", "POST"])
-def login2(request):
+def login_pwd(request):
     if request.method == "GET":
         if 'email' in request.session:
-            return render(request, "login2.html", {'email': request.session['email'], 'form':LoginPwdForm()})
+            return render(request, "login_pwd.html", {'email': request.session['email'], 'form':LoginPwdForm()})
         else:
             return redirect("/")
     
-     ## Toma los datos limpios del formulario
+    ## Toma los datos limpios del formulario
     form = LoginPwdForm(request.POST)
     
     if not form.is_valid():
         messages.error(request,'Error en los datos del formulario.')
-        return redirect('/login2')
+        return redirect('/login_pwd')
 
     password = form.cleaned_data['password']
 
@@ -122,7 +133,7 @@ def login2(request):
         return redirect('/welcome/')
     else:
         messages.error(request,'Contraseña incorrecta.')
-        return redirect('/login2')
+        return redirect('/login_pwd')
 
 
 @require_http_methods(["GET", "POST"])
@@ -134,7 +145,7 @@ def register1(request):
         
         return render(request, "registro1.html", {"form": RegisterForm()})
 
-    ## Toma los datos del formulario
+    ## Toma los datos limpios del formulario
     form = RegisterForm(request.POST)
 
     if not form.is_valid():
@@ -146,16 +157,19 @@ def register1(request):
     pwd1 = form.cleaned_data['pass1']
     pwd2 = form.cleaned_data['pass2']
 
+    ## Comprueba si ya se ha usado ese correo
     if User.objects.filter(email=email).exists():
         messages.error(request,'Error en los datos: ese correo ya está en uso.')
         return redirect('/register1')
     
+    ## Comprueba restricciones sobre las contraseñas 
     if not checkPassword(pwd1, pwd2):
         messages.error(request,'Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números) y las contraseñas deben ser iguales.')
         return redirect('/register1')
 
     # TODO: mandarle un correo de confirmación (y que tenga una campo en la bbdd que sea is_verified)
 
+    ## Registra una sesión del usuario
     User.objects.create_user(email, pwd1)
     user = authenticate(request, email=email, password=pwd1)
     login(request, user)
@@ -173,6 +187,7 @@ def register_fr(request):
                 aux = request.session['registering']
                 request.session.pop("registering")
 
+                ## Borra el reconocedor en caso de existir uno
                 email = request.user
                 user = User.objects.get(email=email)
                 user.cleanUserFolder()
@@ -190,24 +205,28 @@ def register_fr(request):
             return redirect('register1')
     
     elif request.user.is_authenticated:
- 
+        
         email = request.user
         user = User.objects.get(email=email)
 
+        ## Procesa la imagen
         processedImagesPath = user.get_tmp_processed_imgs_path()
         foundFace = processImage(user, request, processedImagesPath)
         numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
 
-        print(str(numFaces) + "/" + str(numRequest))
+        #print(str(numFaces) + "/" + str(numRequest))
 
+        ## Si el número de imágenes parseadas es el correcto 
         if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
             user.createRecognizer()
             return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
 
+        ## Si el número de imágenes enviadas ya ha llegado al máximo
         elif numRequest > settings.MAX_IMG_REQUESTS:
             user.cleanUserFolder()
             return JsonResponse({"allPhotos": False}, status=400)
 
+        ## En caso contrario se siguen necesitando más imágenes
         else:
             return JsonResponse({"allPhotos": False, "facesProgress":math.trunc(((numFaces+1)/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
 
@@ -218,12 +237,14 @@ def welcome(request):
         if 'email' in request.session:
             request.session.pop("email")
 
+        ## Si el usuario esta authenticated
         if request.user.is_authenticated:
-
             user = User.objects.get(email=request.user)
 
             aux = user.recognizer is not None
             return render(request, "welcome.html", {"hasRecognizer":aux})
+        
+        ## En caso contrario enviar a inicio de sesión
         else:
             return redirect('/')
     
@@ -272,14 +293,16 @@ def resetPass(request):
             messages.error(request,'Error en los datos del formulario.')
             return redirect('/resetPass')
 
-        # Toma los datos limpios del formulario
+        ## Toma los datos limpios del formulario
         password_old = form.cleaned_data['password0']
         password_new_1 = form.cleaned_data['password1']
         password_new_2 = form.cleaned_data['password2']
 
+        ## Comprueba que la contraseña actual es la correcta
         user = authenticate(request, email=email, password=password_old)
 
         if user is not None:
+            ## Comprueba las nuevas contraseñas
             if checkPassword(password_new_1, password_new_2):
                 User.objects.changePassword(email, password_new_1)
                 user = authenticate(request, email=email, password=password_new_1)
@@ -312,7 +335,7 @@ def confirmCreateRecognizer(request):
 
         password = form.cleaned_data['password']
 
-        ## Realiza la autenticación
+        ## Comprueba que la contraseña sea correcta
         user = authenticate(request, email=request.user, password=password)
 
         if user is not None:
@@ -325,7 +348,7 @@ def confirmCreateRecognizer(request):
 
 ########################### AUX FUNCTIONS ######################################
 
-
+## Restricciones: len >= 8, letras+numeros, que sean iguales
 def checkPassword(pwd1, pwd2):
     hasLetters = False
     hasNumbers = False

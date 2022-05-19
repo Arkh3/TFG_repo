@@ -44,10 +44,11 @@
   <p>
 
   <p class="change-form" id="contrasenia">
-    ¿Quiere iniciar sesión usando<a href="{% url 'login2' %}"> contraseña</a> ?
+    ¿Quiere iniciar sesión usando<a href="{% url 'login_pwd' %}"> contraseña</a> ?
   <p>
 </div>
 
+{% if hasRecon %}
 <script src="{% static 'js/camera_login.js' %}"></script>
-
+{% endif %}
 {% endblock %}

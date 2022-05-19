@@ -20,7 +20,7 @@
 
   <h2>{{email}}</h2>
   
-  <form action="{% url 'login2' %}" method='POST'> 
+  <form action="{% url 'login_pwd' %}" method='POST'> 
       {% csrf_token %}
          
       {% for field in form %}
@@ -35,7 +35,7 @@
       <p> 
       
       <p class="change-form">
-        ¿Quiere iniciar sesión <a  href="{% url 'login1' %}"> facialmente</a> ?
+        ¿Quiere iniciar sesión <a  href="{% url 'login_fr' %}"> facialmente</a> ?
       <p>
         
       <div class="user-button">
