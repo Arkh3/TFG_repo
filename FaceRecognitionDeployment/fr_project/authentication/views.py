@@ -14,7 +14,7 @@ from django.contrib import messages
 
 # TODO: hacer que tomar las imágenes vaya más rápido plz (haciendo requests de 5 en 5 fotos maybe) (tambien se puede hacer en login y en register)
 # TODO: revisar el reconocimiento facial al final cuando el resto esté acabado
-# TODO: (en register 1) añadir los terminos y condiciones (enlace)
+# TODO: añadir terminos y condiciones en termsAndServices.html
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -345,6 +345,11 @@ def confirmCreateRecognizer(request):
             messages.error(request,'La contraseña actual no es la correcta.')
             return redirect('/confirmCreateRecognizer')
 
+
+@require_http_methods(["GET"])
+def termsAndServices(request):
+    if request.method == "GET":
+        return render(request, "termsAndServices.html",{})
 
 ########################### AUX FUNCTIONS ######################################
 

@@ -32,4 +32,5 @@ urlpatterns = [
     path('deleteRec/', views.deleteRec, name='deleteRec'),
     path('resetPass/', views.resetPass, name='resetPass'),
     path('confirmCreateRecognizer/', views.confirmCreateRecognizer, name='confirmCreateRecognizer'),
+    path('termsAndServices/', views.termsAndServices, name='termsAndServices'),
 ]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
