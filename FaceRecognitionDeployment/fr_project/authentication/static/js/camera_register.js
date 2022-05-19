@@ -96,20 +96,28 @@ async function takepictures() {
     allPhotos = false;
     allRequests = false;
     block = false;
-
-    while (!allPhotos && !allRequests){
-        block = true;
-
+    fotos = [];
+        
+    for(var i=0; i < 5; i++){
         cxt.drawImage(video, 0, 0, width, height);
         var data = canvas.toDataURL('image/png');    
         var info = data.split(",", 2);
+        block = false;
+
+        fotos[i] = info;
+        await delay(200);
+    }
+
+    while (!allPhotos && !allRequests){
+
         $.ajax({
             type : "POST",
             url : "/register_fr/", 
-            data : {foto:info[1], csrfmiddlewaretoken: csrftoken},
+            data : {fotos:fotos, csrfmiddlewaretoken: csrftoken},
             dataType : 'json',
             success: function (response) {
                 /* TODO: HAY QUE HACER QUE LA ZONA DE LA CÁMARA NO SE LE PUEDA HACER CLICK Y A LO MEJOR HABRÍA QUE APAGAR LA CAMARA Y PONER UNA IMAGEN CON UN TICK VERDE O ALGO ASI*/
+                block = false;
                 document.getElementById('loading').innerHTML =JSON.parse(response["facesProgress"])+"%";
                 var aux = JSON.parse(response["allPhotos"]);
                 if (aux){
@@ -120,7 +128,6 @@ async function takepictures() {
                     $("#end").removeClass("none");
                     $("#end").addClass("submit");
                 }
-                block = false;
             },
             error: function (response) {
                 allRequests = true;
@@ -138,9 +145,20 @@ async function takepictures() {
                 document.getElementById('btn_start').innerHTML ="Reintentar"
             }
         });
-        await delay(200);
+
+        fotos = [];
+        
+        for(var i=0; i < 5; i++){
+            cxt.drawImage(video, 0, 0, width, height);
+            var data = canvas.toDataURL('image/png');    
+            var info = data.split(",", 2);
+
+            fotos[i] = info;
+            await delay(200);
+        }
 
         while(block){await delay(50);}
+        block = true;
     }
 }
 

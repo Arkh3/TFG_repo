@@ -12,8 +12,7 @@ from django.contrib import messages
 
 # Create your views here.
 
-# TODO: hacer que tomar las imágenes vaya más rápido plz (haciendo requests de 5 en 5 fotos maybe) (tambien se puede hacer en login y en register)
-# TODO: revisar el reconocimiento facial al final cuando el resto esté acabado
+# TODO: revisar el reconocimiento facial y el reenvio de imágenes
 # TODO: añadir terminos y condiciones en termsAndServices.html
 
 @require_http_methods(["GET", "POST"])
@@ -83,10 +82,10 @@ def login_fr(request):
 
         ## Procesa la imagen
         processedImagesPath = user.get_tmp_processed_imgs_path()
-        foundFace = processImage(user, request, processedImagesPath)
-        numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
-
-        #print(str(numFaces) + "/" + str(numRequest))
+        processImages(user, request, processedImagesPath, registering=False)
+    
+        numRequest, numFaces = user.setAndGetMetadata(newFace = False, newRequest = False)
+        print(str(numFaces) + "/" + str(numRequest))
 
         ## Si el número de imágenes parseadas es el correcto
         if numFaces >= settings.NEEDED_IMGS_FOR_LOGIN:
@@ -107,7 +106,7 @@ def login_fr(request):
         else:
             return JsonResponse({"allPhotos": False}, status=200) 
 
- 
+
 @require_http_methods(["GET", "POST"])
 def login_pwd(request):
     if request.method == "GET":
@@ -211,14 +210,15 @@ def register_fr(request):
 
         ## Procesa la imagen
         processedImagesPath = user.get_tmp_processed_imgs_path()
-        foundFace = processImage(user, request, processedImagesPath)
-        numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
-
-        #print(str(numFaces) + "/" + str(numRequest))
+        processImages(user, request, processedImagesPath, registering=True)
+    
+        numRequest, numFaces = user.setAndGetMetadata(newFace = False, newRequest = False)
+        print(str(numFaces) + "/" + str(numRequest))
 
         ## Si el número de imágenes parseadas es el correcto 
         if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
             user.createRecognizer()
+            user.cleanUserFolder()
             return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
 
         ## Si el número de imágenes enviadas ya ha llegado al máximo
@@ -247,7 +247,7 @@ def welcome(request):
         ## En caso contrario enviar a inicio de sesión
         else:
             return redirect('/')
-    
+
 
 @require_http_methods(["GET", "POST"])
 def deleteRec(request):
@@ -375,16 +375,31 @@ def checkPassword(pwd1, pwd2):
     return True
 
 
-def processImage(user, request, processedImagesPath):
+def processImages(user, request, processedImagesPath, registering):
     tmp_path =  user.get_tmp_raw_imgs_path()
-    base64_img = request.POST['foto']
-    data_img = base64.decodebytes(base64_img.encode('ascii'))
-    id = len(os.listdir(tmp_path)) + 1
-    raw_image_path = os.path.join(tmp_path, str(id) + ".png")
-    f = open(raw_image_path, 'wb')
-    f.write(data_img)
+
+    f = open("requestContent", 'w')
+    f.write(str(request.POST))
     f.close()
 
-    foundFace = parseImage(raw_image_path, processedImagesPath)
+    for key in request.POST:
+        if key.startswith("fotos"):
+            print(key)
+            base64_img = request.POST[key]
+            data_img = base64.decodebytes(base64_img.encode('ascii'))
+            id = len(os.listdir(tmp_path)) + 1
+            raw_image_path = os.path.join(tmp_path, str(id) + ".png")
+            f = open(raw_image_path, 'wb')
+            f.write(data_img)
+            f.close()
+            foundFace = parseImage(raw_image_path, processedImagesPath)
 
-    return foundFace
+            _, numFaces = user.setAndGetMetadata(newFace = foundFace)
+            
+            neededImgs = settings.NEEDED_IMGS_FOR_LOGIN
+
+            if registering:
+                neededImgs = settings.NEEDED_IMGS_FOR_REGISTER
+
+            if numFaces >= neededImgs:
+                break

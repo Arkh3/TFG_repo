@@ -46,7 +46,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         createRecognizer(self.get_tmp_processed_imgs_path(), recognizerPath)
         self.recognizer = recognizerPath
         self.save()
-        self.cleanUserFolder()
 
 
     def clean(self):
