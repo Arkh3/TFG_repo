@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from .models import User
-from django.http import HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 import os, base64
@@ -9,14 +8,15 @@ from .faceRecognition import parseImage
 from .forms import RegisterForm, LoginEmailForm, LoginPwdForm, ResetPwdForm
 from django.http import JsonResponse
 import math
+from django.contrib import messages
 
 # Create your views here.
 
 # TODO: arreglar el spaninglish
-# TODO: comentar bien el código para que esté bien especificado
+# TODO: comentar bien el código para que esté bien documentado
 # TODO: hacer que tomar las imágenes vaya más rápido plz (haciendo requests de 5 en 5 fotos maybe) (tambien se puede hacer en login y en register)
 # TODO: revisar el reconocimiento facial al final cuando el resto esté acabado
-# TODO: hacer que los mensajes de error (tipo: el usuario ya existe) aparezcan en el propio html y no te lleven a otro
+# TODO: (en register 1) añadir los terminos y condiciones (enlace)
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -31,13 +31,15 @@ def login0(request):
     form = LoginEmailForm(request.POST)
 
     if not form.is_valid():
-        return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
+        messages.error(request,'Error en los datos del formulario.')
+        return redirect('/')
 
     # Toma los datos limpios del formulario
     email = form.cleaned_data['email']
 
     if not User.objects.filter(email=email).exists():
-        return HttpResponseBadRequest(f"El usuario no existe")
+        messages.error(request,'Ese usuario no existe')
+        return redirect('/')
 
     request.session['email'] = email
 
@@ -107,7 +109,8 @@ def login2(request):
     form = LoginPwdForm(request.POST)
     
     if not form.is_valid():
-        return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
+        messages.error(request,'Error en los datos del formulario.')
+        return redirect('/login2')
 
     password = form.cleaned_data['password']
 
@@ -118,10 +121,10 @@ def login2(request):
         login(request, user)
         return redirect('/welcome/')
     else:
-        return HttpResponseBadRequest(f"Error: contraseña incorrecta")
+        messages.error(request,'Contraseña incorrecta.')
+        return redirect('/login2')
 
 
-# TODO: añadir los terminos y condiciones (enlace)
 @require_http_methods(["GET", "POST"])
 def register1(request):
 
@@ -135,7 +138,8 @@ def register1(request):
     form = RegisterForm(request.POST)
 
     if not form.is_valid():
-        return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
+        messages.error(request,'Error en los datos del formulario.')
+        return redirect('/register1')
 
     email = form.cleaned_data['email']
     email = email.lower()
@@ -143,10 +147,12 @@ def register1(request):
     pwd2 = form.cleaned_data['pass2']
 
     if User.objects.filter(email=email).exists():
-        return HttpResponseBadRequest(f"Error en los datos: ese correo ya está en uso")
+        messages.error(request,'Error en los datos: ese correo ya está en uso.')
+        return redirect('/register1')
     
     if not checkPassword(pwd1, pwd2):
-        return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números).")
+        messages.error(request,'Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números) y las contraseñas deben ser iguales.')
+        return redirect('/register1')
 
     # TODO: mandarle un correo de confirmación (y que tenga una campo en la bbdd que sea is_verified)
 
@@ -263,7 +269,8 @@ def resetPass(request):
         form = ResetPwdForm(request.POST)
 
         if not form.is_valid():
-            return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
+            messages.error(request,'Error en los datos del formulario.')
+            return redirect('/resetPass')
 
         # Toma los datos limpios del formulario
         password_old = form.cleaned_data['password0']
@@ -279,10 +286,12 @@ def resetPass(request):
                 login(request, user) 
                 return redirect("/welcome/")
             else:
-                return HttpResponseBadRequest("La nueva contraseña no cumple los requisitos")
+                messages.error(request,'Las contraseñas deben ser iguales y la nueva contraseña no cumple los requisitos: len >= 8 y solo puede tener letras y números.')
+                return redirect('/resetPass')
 
         else:
-            return HttpResponseBadRequest("La contraseña actual no es la correcta")
+            messages.error(request,'La contraseña actual no es la correcta.')
+            return redirect('/resetPass')
 
 
 @require_http_methods(["GET", "POST"])
@@ -298,7 +307,8 @@ def confirmCreateRecognizer(request):
         form = LoginPwdForm(request.POST)
         
         if not form.is_valid():
-            return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
+            messages.error(request,'Error en los datos del formulario.')
+            return redirect('/confirmCreateRecognizer')
 
         password = form.cleaned_data['password']
 
@@ -309,7 +319,8 @@ def confirmCreateRecognizer(request):
             request.session['registering'] = False
             return redirect('/register_fr/')
         else:
-            return HttpResponseBadRequest('Contraseña actual errónea.')
+            messages.error(request,'La contraseña actual no es la correcta.')
+            return redirect('/confirmCreateRecognizer')
 
 
 ########################### AUX FUNCTIONS ######################################

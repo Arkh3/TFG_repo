@@ -20,6 +20,18 @@
                 style="width:50px;height:40px;"></a>
     </div>
 
+    {% if messages %}
+
+        {% for message in messages %}
+        <p {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}style="color:tomato;"{% endif %}>
+            
+            {{ message }}
+        </p> 
+        {% endfor %}
+    
+    {% endif %}
+  
+
     <div class="login-box mx-auto">
 
         <h2 style="color:tomato;">El reconocedor actual se borrará y podrás entrenar uno nuevo</h2>
