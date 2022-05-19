@@ -105,7 +105,7 @@ async function takepictures() {
         var info = data.split(",", 2);
         $.ajax({
             type : "POST",
-            url : "/register2/", 
+            url : "/register_fr/", 
             data : {foto:info[1], csrfmiddlewaretoken: csrftoken},
             dataType : 'json',
             success: function (response) {

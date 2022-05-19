@@ -3,11 +3,15 @@
 {% block content %}
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
+
 <div class="login-box mx-auto">
 
-  <h2>Reconocimiento Facial</h2>
-
+  {% if registering %}
+  <h2>Registro</h2>
   <h2>{{email}}</h2>
+  {% else %}
+  <h2>Entrenar Reconocedor</h2>
+  {% endif %}
 
   <a href="#">
     <div class="camera-area" id="radiotfoto">
@@ -26,12 +30,16 @@
     </div>
   </a>
 
-  <a href="{% url 'welcome' %}" id="end"  class="justify-content-center submit">
+  <a href="{% url 'welcome' %}" id="end" class="justify-content-center submit">
     <span></span>
     <span></span>
     <span></span>
     <span></span>
+    {% if registering %}
     Omitir
+    {% else %}
+    Volver al Menú
+    {% endif %}
   </a>
 </div>
 </div>

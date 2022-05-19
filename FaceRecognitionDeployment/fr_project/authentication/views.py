@@ -14,8 +14,9 @@ import math
 
 # TODO: arreglar el spaninglish
 # TODO: comentar bien el código para que esté bien especificado
-# TODO: hacer que tomar las imágenes vaya más rapido plz
+# TODO: hacer que tomar las imágenes vaya más rápido plz (haciendo requests de 5 en 5 fotos maybe) (tambien se puede hacer en login y en register)
 # TODO: revisar el reconocimiento facial al final cuando el resto esté acabado
+# TODO: hacer que los mensajes de error (tipo: el usuario ya existe) aparezcan en el propio html y no te lleven a otro
 
 @require_http_methods(["GET", "POST"])
 def login0(request):
@@ -64,38 +65,21 @@ def login1(request):
             return redirect("/")
 
     #TODO: esto debería poder hacerse desde cualquier máquina pero no se puede hacer desde dos máquinas simultaneamlente
-    if 'email' not in request.session:
-        return JsonResponse({"allPhotos": False, "noEmail":True}, status=400)
-    else:
+    elif request.method == "POST":
+        if 'email' not in request.session:
+            return JsonResponse({"allPhotos": False, "noEmail":True}, status=400)
+
         email = request.session['email']
+        user = User.objects.get(email=email)
 
-    user = User.objects.get(email=email)
-
-    numRequest, numFaces = user.setAndGetMetadata(newRequest = False, newFace = False)
-
-    if numFaces >= settings.NEEDED_IMGS_FOR_LOGIN or numRequest > settings.MAX_IMG_REQUESTS:
-        user.cleanUserFolder()
-        return JsonResponse({"allPhotos": False, "noEmail":False}, status=400)
-    else:
-        tmp_path =  user.get_tmp_raw_imgs_path()
-        tmpImagesPath = user.get_tmp_processed_imgs_path()
-       
-        # Take image from request and save it
-        base64_img = request.POST['foto']
-        data_img = base64.decodebytes(base64_img.encode('ascii'))
-        id = len(os.listdir(tmp_path)) + 1
-        raw_image_path = os.path.join(tmp_path, str(id) + ".png")
-        f = open(raw_image_path, 'wb')
-        f.write(data_img)
-        f.close()
-
-        foundFace = parseImage(raw_image_path, tmpImagesPath)
+        processedImagesPath = user.get_tmp_processed_imgs_path()
+        foundFace = processImage(user, request, processedImagesPath)
         numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
 
         print(str(numFaces) + "/" + str(numRequest))
 
-        if numFaces == settings.NEEDED_IMGS_FOR_LOGIN:
-            user2 = authenticate(request, email=request.session['email'], images=tmpImagesPath)
+        if numFaces >= settings.NEEDED_IMGS_FOR_LOGIN:
+            user2 = authenticate(request, email=request.session['email'], images=processedImagesPath)
             user.cleanUserFolder()
             if user2 is not None:
                 login(request, user2)
@@ -119,19 +103,19 @@ def login2(request):
         else:
             return redirect("/")
     
+     ## Toma los datos limpios del formulario
     form = LoginPwdForm(request.POST)
     
     if not form.is_valid():
         return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
 
-    ## Toma los datos limpios del formulario
     password = form.cleaned_data['password']
-#
-    # Realiza la autenticación
+
+    ## Realiza la autenticación
     user = authenticate(request, email=request.session['email'], password=password)
 
     if user is not None:
-        login(request, user) # Registra el usuario en la sesión
+        login(request, user)
         return redirect('/welcome/')
     else:
         return HttpResponseBadRequest(f"Error: contraseña incorrecta")
@@ -147,12 +131,12 @@ def register1(request):
         
         return render(request, "registro1.html", {"form": RegisterForm()})
 
+    ## Toma los datos del formulario
     form = RegisterForm(request.POST)
 
     if not form.is_valid():
         return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
 
-    # Toma los datos limpios del formulario
     email = form.cleaned_data['email']
     email = email.lower()
     pwd1 = form.cleaned_data['pass1']
@@ -161,71 +145,68 @@ def register1(request):
     if User.objects.filter(email=email).exists():
         return HttpResponseBadRequest(f"Error en los datos: ese correo ya está en uso")
     
-    #TODO: descomentar esto al acabar el proyecto
-    #if not checkPassword(pwd1, pwd2):
-    #    return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números).")
+    if not checkPassword(pwd1, pwd2):
+        return HttpResponseBadRequest(f"Error en los datos: la contraseña tiene que cumplir ciertos criterios (len >= 8 y solo puede tener letras y números).")
 
     # TODO: mandarle un correo de confirmación (y que tenga una campo en la bbdd que sea is_verified)
 
     User.objects.create_user(email, pwd1)
-
     user = authenticate(request, email=email, password=pwd1)
-        
     login(request, user)
     
     request.session['registering'] = True
-    request.session['email'] = email
-    return redirect('/register2/')
+    return redirect('/register_fr/')
 
 
 @require_http_methods(["GET", "POST"])
-def register2(request):
+def register_fr(request):
+    
     if request.method == "GET":
-        if 'registering' in request.session and request.user.is_authenticated:
-            request.session.pop("registering")
-            return render(request, "registro2.html", {'email':request.session['email']})
+        if request.user.is_authenticated:
+            if 'registering' in request.session:
+                aux = request.session['registering']
+                request.session.pop("registering")
+
+                email = request.user
+                user = User.objects.get(email=email)
+                user.cleanUserFolder()
+                recogPath = user.recognizer 
+                
+                if recogPath is not None:
+                    os.remove(recogPath)
+                    user.recognizer = None
+                    user.save()
+
+                return render(request, "registro_fr.html", {'email':request.user, 'registering': aux})
+            else:
+                return redirect('welcome')
         else:
             return redirect('register1')
     
     elif request.user.is_authenticated:
  
-        #TODO: Para reducir el número de peticiones a lo mejor se puede mandar requests de 5 en 5 fotos (tambien se puede hacer en login y en create recognizer)
         email = request.user
         user = User.objects.get(email=email)
 
-        numRequest, numFaces = user.setAndGetMetadata(newRequest = False, newFace = False)
+        processedImagesPath = user.get_tmp_processed_imgs_path()
+        foundFace = processImage(user, request, processedImagesPath)
+        numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
 
-        if numFaces >= settings.NEEDED_IMGS_FOR_REGISTER or numRequest > settings.MAX_IMG_REQUESTS:
+        print(str(numFaces) + "/" + str(numRequest))
+
+        if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
+            user.createRecognizer()
+            return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
+
+        elif numRequest > settings.MAX_IMG_REQUESTS:
+            user.cleanUserFolder()
             return JsonResponse({"allPhotos": False}, status=400)
+
         else:
-            tmp_path =  user.get_tmp_raw_imgs_path()
-            tmpImagesPath = user.get_tmp_processed_imgs_path()
-
-            base64_img = request.POST['foto']
-            data_img = base64.decodebytes(base64_img.encode('ascii'))
-            id = len(os.listdir(tmp_path)) + 1
-            f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
-            f.write(data_img)
-            f.close()
-
-            foundFace = parseImage(tmp_path, tmpImagesPath)
-            numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
-
-            print(str(numFaces) + "/" + str(numRequest))
-
-            if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
-                user.createRecognizer()
-                return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
-
-            elif numRequest > settings.MAX_IMG_REQUESTS:
-                user.cleanUserFolder()
-                return JsonResponse({"allPhotos": False}, status=400)
-
-            else:
-                return JsonResponse({"allPhotos": False, "facesProgress":math.trunc(((numFaces+1)/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
+            return JsonResponse({"allPhotos": False, "facesProgress":math.trunc(((numFaces+1)/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET"])
 def welcome(request):
     if request.method == "GET":
         if 'email' in request.session:
@@ -241,9 +222,13 @@ def welcome(request):
             return redirect('/')
     
 
-# TODO: si el "borrar reconocedor" tiene un href="#" se ve bonico pero hace cosas raras, sin el href funciona bien pero se ve feo, se puede arreglar haciendo que salga un popup
-@require_http_methods(["POST"])
+@require_http_methods(["GET", "POST"])
 def deleteRec(request):
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            user = User.objects.get(email=request.user)
+            return render(request, "deleteRec.html", {})
+
     if request.user.is_authenticated:
         email = request.user
         user = User.objects.get(email=email)
@@ -264,7 +249,6 @@ def logoutUser(request):
     return redirect('/')
 
 
-#TODO: en resetPass y createRecognizer añadir un boton a la izquierda arriba con un icono de la casita que te lleve a welcome
 @require_http_methods(["GET", "POST"])
 def resetPass(request):
     if request.method == "GET":
@@ -288,7 +272,7 @@ def resetPass(request):
 
         user = authenticate(request, email=email, password=password_old)
 
-        if user is not None :
+        if user is not None:
             if checkPassword(password_new_1, password_new_2):
                 User.objects.changePassword(email, password_new_1)
                 user = authenticate(request, email=email, password=password_new_1)
@@ -301,58 +285,31 @@ def resetPass(request):
             return HttpResponseBadRequest("La contraseña actual no es la correcta")
 
 
-#TODO: Pones la contraseña y entrenas de nuevo el modelo por si no te reconoce bien porque se haya creado un modelo defectuoso o porque te haya crecido la barba o el pelo o hayas tenido un cambio radical en la cara, ...
-#TODO: A LO MEJOR SE PUEDEN REUTILIZAR LAS VISTAS Y HTMLS DE REGISTRO2 Y CREATE RECOGNIZER QUE HACEN COSITAS MUY PARECIDAS
-#TODO cuando en el menú se le de a cambiar el reconocimiento facial poner una alarma en plan bruh se te va a borrar el reconocedor facial
 @require_http_methods(["GET", "POST"])
-def createRecognizer(request):
+def confirmCreateRecognizer(request):
     if request.method == "GET":
         if request.user.is_authenticated:
-            email = request.user
-            user = User.objects.get(email=email)
-            recogPath = user.recognizer 
-            
-            if recogPath is not None:
-                os.remove(recogPath)
-                user.recognizer = None
-                user.save()
-            return render(request, "createRecognizer.html", {'email':request.user})
-        else:
-            return redirect('register1')
-    
-    elif request.user.is_authenticated:
- 
+            return render(request, "confirmCreateRecognizer.html", {'form': LoginPwdForm()})
+
+    elif request.method == "POST" and request.user.is_authenticated:
         email = request.user
-        user = User.objects.get(email=email)
 
-        numRequest, numFaces = user.setAndGetMetadata(newRequest = False, newFace = False)
+        ## Toma los datos limpios del formulario
+        form = LoginPwdForm(request.POST)
+        
+        if not form.is_valid():
+            return HttpResponseBadRequest(f"Error en los datos del formulario: {form.errors}")
 
-        if numFaces >= settings.NEEDED_IMGS_FOR_REGISTER or numRequest > settings.MAX_IMG_REQUESTS:
-            return JsonResponse({"allPhotos": False}, status=400)
+        password = form.cleaned_data['password']
+
+        ## Realiza la autenticación
+        user = authenticate(request, email=request.user, password=password)
+
+        if user is not None:
+            request.session['registering'] = False
+            return redirect('/register_fr/')
         else:
-            tmp_path =  user.get_tmp_raw_imgs_path()
-            tmpImagesPath = user.get_tmp_processed_imgs_path()
-
-            base64_img = request.POST['foto']
-            data_img = base64.decodebytes(base64_img.encode('ascii'))
-            id = len(os.listdir(tmp_path)) + 1
-            f = open(os.path.join(tmp_path, str(id) + ".png"), 'wb')
-            f.write(data_img)
-            f.close()
-
-            foundFace = parseImage(tmp_path, tmpImagesPath)
-            numRequest, numFaces = user.setAndGetMetadata(newFace = foundFace)
-
-            if numFaces == settings.NEEDED_IMGS_FOR_REGISTER:
-                user.createRecognizer()
-                return JsonResponse({"allPhotos": True, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
-
-            elif numRequest > settings.MAX_IMG_REQUESTS:
-                user.cleanUserFolder()
-                return JsonResponse({"allPhotos": False}, status=400)
-
-            else:
-                return JsonResponse({"allPhotos": False, "facesProgress":math.trunc((numFaces/settings.NEEDED_IMGS_FOR_REGISTER)*100)}, status=200)
+            return HttpResponseBadRequest('Contraseña actual errónea.')
 
 
 ########################### AUX FUNCTIONS ######################################
@@ -379,4 +336,16 @@ def checkPassword(pwd1, pwd2):
     return True
 
 
-        
+def processImage(user, request, processedImagesPath):
+    tmp_path =  user.get_tmp_raw_imgs_path()
+    base64_img = request.POST['foto']
+    data_img = base64.decodebytes(base64_img.encode('ascii'))
+    id = len(os.listdir(tmp_path)) + 1
+    raw_image_path = os.path.join(tmp_path, str(id) + ".png")
+    f = open(raw_image_path, 'wb')
+    f.write(data_img)
+    f.close()
+
+    foundFace = parseImage(raw_image_path, processedImagesPath)
+
+    return foundFace
