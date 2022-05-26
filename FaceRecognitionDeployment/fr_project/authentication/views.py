@@ -12,7 +12,6 @@ from django.contrib import messages
 
 # Create your views here.
 
-# TODO: revisar el reconocimiento facial y el reenvio de imágenes
 # TODO: añadir terminos y condiciones en termsAndServices.html
 
 @require_http_methods(["GET", "POST"])
@@ -72,7 +71,6 @@ def login_fr(request):
         else:
             return redirect("/")
 
-    #TODO: esto debería poder hacerse desde cualquier máquina pero no se puede hacer desde dos máquinas simultaneamlente
     elif request.method == "POST":
         if 'email' not in request.session:
             return JsonResponse({"allPhotos": False, "noEmail":True}, status=400)
@@ -378,13 +376,8 @@ def checkPassword(pwd1, pwd2):
 def processImages(user, request, processedImagesPath, registering):
     tmp_path =  user.get_tmp_raw_imgs_path()
 
-    f = open("requestContent", 'w')
-    f.write(str(request.POST))
-    f.close()
-
     for key in request.POST:
         if key.startswith("fotos"):
-            print(key)
             base64_img = request.POST[key]
             data_img = base64.decodebytes(base64_img.encode('ascii'))
             id = len(os.listdir(tmp_path)) + 1

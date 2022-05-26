@@ -72,8 +72,6 @@ function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
 
-//TODO: hacer que el boton de start no aparezca hasta que no se haya iniciado la webcam
-
 async function takepictures() {
 
     $("#loading").addClass("text-info");
@@ -114,7 +112,7 @@ async function takepictures() {
             data : {fotos:fotos, csrfmiddlewaretoken: csrftoken},
             dataType : 'json',
             success: function (response) {
-                /* TODO: HAY QUE HACER QUE LA ZONA DE LA CÁMARA NO SE LE PUEDA HACER CLICK Y A LO MEJOR HABRÍA QUE APAGAR LA CAMARA Y PONER UNA IMAGEN CON UN TICK VERDE O ALGO ASI*/
+                /* TODO: HAY QUE HACER QUE LA ZONA DE LA CÁMARA NO SE LE PUEDA HACER CLICK Y A LO MEJOR HABRÍA QUE APAGAR LA CAMARA Y PONER UNA IMAGEN CON UN TICK VERDE*/
                 var aux = JSON.parse(response["allPhotos"]);
                 if (aux){
                     allPhotos = true;

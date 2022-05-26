@@ -4,7 +4,7 @@
 .background-color p {
   color: #000;
   font-family: 'montserrat';
-  font-size: 3vw;
+  font-size: max(3vw, 30px);
   font-weight: bold;
   text-align: center;
   background: rgba(255, 253, 160, 1);
@@ -340,4 +340,8 @@ html {
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.row {
+  align-content: center;
 }
