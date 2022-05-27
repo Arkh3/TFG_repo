@@ -20,44 +20,48 @@
                 style="width:50px;height:40px;"></a>
     </div>
 
-    {% if messages %}
+    <div class="container h-100">       
+        <div class="row roww align-items-center h-100">
+            {% if messages %}
 
-        {% for message in messages %}
-        <p {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}style="color:tomato;"{% endif %}>
+                {% for message in messages %}
+                <p {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}style="color:tomato;"{% endif %}>
+                    
+                    {{ message }}
+                </p> 
+                {% endfor %}
             
-            {{ message }}
-        </p> 
-        {% endfor %}
-    
-    {% endif %}
-  
+            {% endif %}
+        
 
-    <div class="login-box mx-auto">
+            <div class="login-box mx-auto">
 
-        <h2 style="color:tomato;">El reconocedor actual se borrará y podrás entrenar uno nuevo</h2>
-        <h3 style="color:whitesmoke;">Para continuar escriba la contraseña actual</h3>
+                <h5 style="color:tomato;">El reconocedor actual se borrará y podrás entrenar uno nuevo</h5><br>
+                <h5 style="color:whitesmoke;">Para continuar escriba la contraseña actual</h5><br>
 
 
-        <form action="{% url 'confirmCreateRecognizer' %}" method='POST' enctype="multipart/form-data">
-            {% csrf_token %}
+                <form action="{% url 'confirmCreateRecognizer' %}" method='POST' enctype="multipart/form-data">
+                    {% csrf_token %}
 
-            {% for field in form %}
-            <div class="user-box">
-                {{field}}
-                {{field.label_tag}}
+                    {% for field in form %}
+                    <div class="user-box">
+                        {{field}}
+                        {{field.label_tag}}
+                    </div>
+                    {% endfor %}
+
+                    <div class="user-button">
+                        <button type="submit" class="justify-content-center submit">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            Continuar
+                        </button>
+                    </div>
+                </form>
             </div>
-            {% endfor %}
-
-            <div class="user-button">
-                <button type="submit" class="justify-content-center submit">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    Continuar
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 
 </html>
