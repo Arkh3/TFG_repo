@@ -23,7 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-yh(48!aet(-ivc)po@=#=a@1&q%m3h!rh9z7$&^t2r^1es9l8='
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -38,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -128,5 +128,29 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
 # ================== ATUCH AND ANDREWS ZONE ===========================
+
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'authentication.backends.FR_backend']
+
+AUTH_USER_MODEL = "authentication.User"
+
+RECOGNIZERS_PATH = "/code/authentication/recognizers"
+
+# =======
+
+MEDIA_URL = 'media/'                            # Lo que mostrará en la url
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    # Donde va a buscar los archivos realmente
+
+USERS_DIRECTORY = os.path.join(BASE_DIR, 'authentication',  'users')
+
+# =======
+
+MAX_IMG_REQUESTS = 50
+
+NEEDED_IMGS_FOR_REGISTER = 20
+NEEDED_IMGS_FOR_LOGIN = 10
+
+RECOGNIZE_TOLERANCE = 1/6
+RECOGNIZE_MIN_VALID_IMGS = 8
+
+MAX_MODEL_IMAGES = 30

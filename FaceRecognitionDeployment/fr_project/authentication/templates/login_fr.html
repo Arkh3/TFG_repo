@@ -1,0 +1,54 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+<div class="login-box mx-auto">
+
+  <h2>Inicio de Sesión</h2>
+
+  <h2>{{email}}</h2>
+
+  {% if hasRecon %}
+  <a href="#">
+    <div class="camera-area" id="radiotfoto">
+      <div id="withCameraPic">
+        <img class="camera-img" src="{% static 'imgs/camera.png' %}" alt="Camera pic">
+        <p class="pr-4 camera-div-text">Click aquí para empezar
+        <p>
+      </div>
+      <div id="withOutCameraPic" class="none">
+        <div class="container_radio">
+          <video id="video" autoplay="autoplay" class="video_container none"></video>
+        </div>
+        <canvas id="canvas" class="none"></canvas>
+        <p id="loading" class="text-info"></p>
+        <a class="btn btn-primary btn-sm mb-3" type="submit" id="btn_start">Empezar</a>
+      </div>
+    </div>
+  </a>
+  {% else %}
+  <div>
+    <div class="camera-area2" id="radiotfoto">
+      <div id="withOutCameraPic">
+        <img class="camera-img" src="{% static 'imgs/noCameras.png' %}" alt="Sin reconocedor">
+        <p class="pr-4 camera-div-text" style="color:tomato;"> No dispones de reconocedor
+        <p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <p class="change-form" id="correo_equivocado">
+    ¿Correo equivocado? <a href="{% url 'login0' %}"> Usar otra cuenta</a>
+  <p>
+
+  <p class="change-form" id="contrasenia">
+    ¿Quiere iniciar sesión usando<a href="{% url 'login_pwd' %}"> contraseña</a> ?
+  <p>
+</div>
+
+{% if hasRecon %}
+<script src="{% static 'js/camera_login.js' %}"></script>
+{% endif %}
+{% endblock %}

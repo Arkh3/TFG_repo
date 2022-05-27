@@ -1,0 +1,51 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+
+  {% for message in messages %}
+    <p {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}style="color:tomato;"{% endif %}>
+        
+        {{ message }}
+    </p> 
+  {% endfor %}
+
+{% endif %}
+
+<div class="login-box mx-auto">
+
+  <h2>Registro</h2>
+
+  <form action="{% url 'register1' %}" method='POST'>
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="user-box">
+      {{field}}
+      {{field.label_tag}}
+    </div>
+    {% endfor %}
+
+    <label class="remeber-user">
+      <input type="checkbox" id="field_terms" value="first_checkbox" required>
+      Acepto todos los <a href="{% url 'termsAndServices' %}" target="_blank">Términos y Condiciones</a>
+    </label>
+
+    <p class="change-form">
+      ¿Ya tienes cuenta? <a  href="{% url 'login_fr' %}"> Inicia sesión</a>
+    <p>
+
+    <div class="user-button">
+      <button type="submit" class="justify-content-center submit">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Crear cuenta
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

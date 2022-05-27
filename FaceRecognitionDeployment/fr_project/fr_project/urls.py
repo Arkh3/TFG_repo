@@ -16,6 +16,21 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from authentication import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
+    path('', views.login0, name='login0'),
+    path('login_fr/', views.login_fr, name='login_fr'),
+    path('login_pwd/', views.login_pwd, name='login_pwd'),
+    path('register1/', views.register1, name='register1'),
+    path('register_fr/', views.register_fr, name='register_fr'),
+    path('welcome/', views.welcome, name='welcome'),
+    path('logout/', views.logoutUser, name='logout'),
+    path('deleteRec/', views.deleteRec, name='deleteRec'),
+    path('resetPass/', views.resetPass, name='resetPass'),
+    path('confirmCreateRecognizer/', views.confirmCreateRecognizer, name='confirmCreateRecognizer'),
+    path('termsAndServices/', views.termsAndServices, name='termsAndServices'),
+]   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

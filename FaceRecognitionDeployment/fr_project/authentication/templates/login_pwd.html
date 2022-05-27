@@ -1,0 +1,53 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+
+  {% for message in messages %}
+    <p {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}style="color:tomato;"{% endif %}>
+        
+        {{ message }}
+    </p> 
+  {% endfor %}
+
+{% endif %}
+
+
+<div class="login-box mx-auto">
+
+  <h2>Inicio de Sesión</h2>
+
+  <h2>{{email}}</h2>
+  
+  <form action="{% url 'login_pwd' %}" method='POST'> 
+      {% csrf_token %}
+         
+      {% for field in form %}
+      <div class="user-box">
+        {{field}}
+        {{field.label_tag}}
+      </div>
+      {% endfor %}
+      
+      <p class="change-form">
+        ¿Correo equivocado? <a  href="{% url 'login0' %}"> Usar otra cuenta</a>
+      <p> 
+      
+      <p class="change-form">
+        ¿Quiere iniciar sesión <a  href="{% url 'login_fr' %}"> facialmente</a> ?
+      <p>
+        
+      <div class="user-button">
+        <button type="submit" class="justify-content-center submit">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+        </button>
+    </div>
+    </form>
+  </div>
+
+{% endblock %}

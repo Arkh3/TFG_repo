@@ -1,0 +1,48 @@
+{% extends "common.html" %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+
+  {% for message in messages %}
+    <p {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}style="color:tomato;"{% endif %}>
+        
+        {{ message }}
+    </p> 
+  {% endfor %}
+
+{% endif %}
+
+<div class="float-start m-3">
+  <a href="{% url 'welcome' %}"><img src="{% static 'imgs/goback.png' %}" alt="Go back"
+      style="width:50px;height:40px;"></a>
+</div>
+
+<div class="login-box mx-auto">
+
+  <h2>Cambiar contraseña</h2>
+
+  <form action="{% url 'resetPass' %}" method='POST' enctype="multipart/form-data">
+    {% comment %} CAMBIAR LA URL {% endcomment %}
+    {% csrf_token %}
+
+    {% for field in form %}
+    <div class="user-box">
+      {{field}}
+      {{field.label_tag}}
+    </div>
+    {% endfor %}
+
+    <div class="user-button">
+      <button type="submit" class="justify-content-center submit">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Cambiar
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
