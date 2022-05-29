@@ -1,1 +1,1 @@
-Proyecto de Fin de Grado de Adrián Turiel Charro y Andrés Teruel Fernández.
+Proyecto de Fin de Grado de Adrián Turiel Charro (aturiel@ucm.es) y Andrés Teruel Fernández (anteruel@ucm.es).

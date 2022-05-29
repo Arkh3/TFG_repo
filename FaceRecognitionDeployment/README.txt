@@ -4,7 +4,7 @@ Start the deployment:
 docker-compose run web django-admin startproject <django-project> .
 
 Run the deployment:
-docker-compose up
+docker-compose up (if this fails retry since the database might not have initialized on time)
 
 Connect to the docker:/code and run
 python3 manage.py migrate
