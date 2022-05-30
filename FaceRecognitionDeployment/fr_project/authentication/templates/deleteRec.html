@@ -15,19 +15,23 @@
 
 <body class="text-center w-100 vh-100">
 
-    <div class="login-box mx-auto">
+    <div class="container h-100">       
+        <div class="row roww align-items-center h-100">
 
-        <h2>¿Estás seguro de querer borrar tu reconocedor?</h2>
-        <h3 style="color:tomato;">Esta acción es irreversible</h3>
+            <div class="login-box mx-auto">
 
-        <a class="btn btn-lg btn-secondary" href="{% url 'welcome' %}" role="button">Cancelar</a>
+                <h2>¿Estás seguro de querer borrar tu reconocedor?</h2>
+                <h3 style="color:tomato;">Esta acción es irreversible</h3>
 
-        <button type="submit" id="delete" class="btn btn-lg btn-danger">
-            Borrar
-        </button>
+                <a class="btn btn-lg btn-secondary" href="{% url 'welcome' %}" role="button">Cancelar</a>
 
+                <button type="submit" id="delete" class="btn btn-lg btn-danger">
+                    Borrar
+                </button>
+
+            </div>
+        </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <script>
